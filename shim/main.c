@@ -93,6 +93,11 @@ BoundingBox* CreateBoundingBox(Vector3* min, Vector3* max) {
   *bb = (BoundingBox){ *min, *max };
   return bb;
 }
+  
+void UpdateModelAnimationWrapper2(Model *model, ModelAnimation *anim, int index, int frame){
+  UpdateModelAnimation(*model, anim[index], frame);
+}
+
 
 Wave* LoadWaveWrapper(const char *fileName) {
 	Wave* result = malloc(sizeof(Wave));

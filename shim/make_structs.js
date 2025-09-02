@@ -89,5 +89,10 @@ BoundingBox* CreateBoundingBox(Vector3* min, Vector3* max) {
   BoundingBox* bb = malloc(sizeof(BoundingBox));
   *bb = (BoundingBox){ *min, *max };
   return bb;
-}`
+}
+  
+void UpdateModelAnimationWrapper2(Model *model, ModelAnimation *anim, int index, int frame){
+  UpdateModelAnimation(*model, anim[index], frame);
+}
+`
 }

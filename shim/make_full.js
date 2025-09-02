@@ -3,6 +3,7 @@ const fs = require("fs");
 const makeWrappers = require('./make_wrappers.js');
 const makeStruct = require('./make_structs.js');
 const getFfiFor = require('./get_ffi_value.js');
+const getDeclarations = require('./define_consts.js');
 
 const first = `#include "raylib.h"
 
@@ -25,14 +26,26 @@ const ffi_values = fs.readdirSync('raylib.h')
 
 const structs = makeStruct();
 
-fs.writeFileSync('shim/main.c', first + '\n' + structs + '\n\n' + wrappers.join('\n\n'));
+fs.writeFileSync('features/consts.coffee', `
+package gui::consts;
 
+using namespace rew::ns;
 
-fs.writeFileSync('features/ffi/_values.coffee', `
-func_map = class {
-${ffi_values.join('\n\n')}
+gui::consts:: = {
+  ...${getDeclarations('rcore')},
+  ...${getDeclarations('rgui')}
 }
-
-module.exports = func_map
 `);
+
+
+// fs.writeFileSync('shim/main.c', first + '\n' + structs + '\n\n' + wrappers.join('\n\n'));
+
+
+// fs.writeFileSync('features/ffi/_values.coffee', `
+// func_map = class {
+// ${ffi_values.join('\n\n')}
+// }
+
+// module.exports = func_map
+// `);
 
