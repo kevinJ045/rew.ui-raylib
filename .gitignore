@@ -1,0 +1,7 @@
+
+**/target/
+**/**.qrew
+**/**.brew
+.artifacts/
+**/.artifacts/
+**/pimmy.lock
