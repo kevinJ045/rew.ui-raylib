@@ -1,4 +1,4 @@
 manifest:
-  package: rew.ui-sdl
+  package: rew.ui-raylib
 entries:
-  main: main.coffee
+  main: main.brew

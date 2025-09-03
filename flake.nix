@@ -80,7 +80,7 @@
           nativeBuildInputs = [ pkgs.pkg-config ];
 
           shellHook = ''
-            export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath libraries}:$LD_LIBRARY_PATH
+            export LD_LIBRARY_PATH=/nix/store/2i2csri2c0kgp19f4jzv2f04ml6pg8y1-SDL2-2.30.2/lib:/nix/store/y2d2sxplgqckzzkkak31apasc3irixn7-SDL2_ttf-2.22.0/lib:${pkgs.lib.makeLibraryPath libraries}:$LD_LIBRARY_PATH
             echo "DevShell ready with full X11/Wayland/EGL/Vulkan/Audio stack"
           '';
         };

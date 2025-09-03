@@ -1,5 +1,6 @@
 package gui::window;
 
+import Registry from "./components/registry.coffee";
 import { listener } from "./events.coffee";
 
 using namespace rew::ns;
@@ -13,6 +14,15 @@ function gui::window::init(title, flags, w = 800, h = 600) {
   InitWindow w, h, ^"#{title}\0"
 
   return true;
+}
+
+function gui::window::background(color){
+  listener._color = color;
+}
+
+function gui::window::add(...components){
+  components.forEach (component) =>
+    Registry[component._type].push(component);
 }
 
 function gui::window::close(){

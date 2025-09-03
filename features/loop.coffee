@@ -27,8 +27,8 @@ function gui::loop::run(fps = 0) {
     unless running
       mainEvents._onQuit()
       break
-
-    mainEvents._loop()
+    
+    mainEvents._loop(GetFrameTime())
   }
 }
 
