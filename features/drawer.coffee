@@ -13,6 +13,7 @@ listener.on 'loop', (time) ->
   
   Registry['2d'].forEach (item) ->
     item.draw(time)
+    item.emitter.emit('draw', time)
 
 
   # BeginMode3DWrapper cam

@@ -8,3 +8,8 @@ import { Text } from "./text.coffee";
 gui::components::Text = Text;
 
 
+
+import { Button } from "./button.coffee";
+gui::components::Button = Button;
+
+

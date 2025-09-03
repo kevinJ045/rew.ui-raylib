@@ -1,4 +1,4 @@
-import { Component, DrawFunction } from "./base.coffee";
+import { Component } from "./base.coffee";
 
 using namespace rew::ns;
 using namespace gui::raylib;

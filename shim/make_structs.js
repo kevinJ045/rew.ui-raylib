@@ -19,6 +19,10 @@ Vector4* CreateVector4(float x, float y, float z, float w) {
   return v;
 }
 
+void FreePTRVal(void *v){
+  free(v);
+}
+
 Matrix* CreateMatrix(
   float m0, float m4, float m8,  float m12,
   float m1, float m5, float m9,  float m13,

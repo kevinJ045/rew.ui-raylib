@@ -1,4 +1,4 @@
-import { Component, DrawFunction } from "./base.coffee";
+import { Component } from "./base.coffee";
 
 using namespace rew::ns;
 using namespace gui::raylib;
@@ -11,6 +11,20 @@ function Rectangle(
 )
 
 function Rectangle::draw(time)
-  DrawRectangle @x, @y, @w, @h, @color or 0xFFFF0000
+  pos = CreateVector2 @x, @y
+  size = CreateVector2 @w, @h
+  DrawRectangleVWrapper pos, size, @color or 0xFFFF0000
+  FreePTRVal pos
+  FreePTRVal size
+
+function Rectangle::getRect()
+  if @_current_rec
+    return @_current_rec
+  @_current_rec = CreateRectangle @x, @y, @w, @h
+  @_current_rec
+
+function Rectangle::freeRect()
+  FreePTRVal @_current_rec
+  @_current_rec = null;
 
 export { Rectangle }

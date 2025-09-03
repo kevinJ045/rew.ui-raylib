@@ -13,23 +13,45 @@ Object.defineProperty(gui::loop::, 'running', {
 });
 
 
-function gui::loop::run(fps = 0) {
+function gui::loop::run(fps = 0, time = 1) {
   running = true;
 
   SetTargetFPS(fps) if fps
 
   mainEvents._onStart()
 
-  loop {
-    if WindowShouldClose()
-      running = mainEvents._beforeQuit() ?? false;
+  start = ->
+    if IsWindowResized()
+      mainEvents._resize(GetRenderWidth(), GetRenderHeight())
 
-    unless running
-      mainEvents._onQuit()
-      break
-    
+    if WindowShouldClose()
+      CloseWindow()
+      running = mainEvents._beforeQuit();
+  
+  frame = ->
     mainEvents._loop(GetFrameTime())
-  }
+
+  if fps
+    loop {
+      start()
+
+      unless running
+        mainEvents._onQuit()
+        break
+      
+      frame()
+    }
+  else
+    rew::channel::new time, ->
+      start()
+
+      unless running
+        mainEvents._onQuit()
+        return @stop()
+
+      frame()
+
+
 }
 
 function gui::loop::stop() {
