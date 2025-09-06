@@ -16,6 +16,9 @@ function Cube(
   @model = LoadModelFromMeshWrapper GenMeshCubeWrapper @w, @h, @d
   SetMaterialColors @model, @color, 0xff000000, 0xffffff00, 0xff000000, 0xffffff00
 
+  # if gui::shadow::_shader
+  #   SetMaterialShader @model, gui::shadow::_shader
+
 function Cube::draw(time)
   pos = CreateVector3 @pos.x, @pos.y, @pos.z
   rlPushMatrix()

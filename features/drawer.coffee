@@ -29,6 +29,8 @@ listener.on 'loop', (time) ->
     EndMode3D()
     EndTextureMode()
 
+    gui::shadow::update()
+
   if gui::window::camera
     BeginMode3DWrapper gui::window::camera
     

@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include "raymath.h"
 
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
@@ -42,6 +43,15 @@ Matrix* CreateMatrix(
   *m = (Matrix){ m0,m4,m8,m12, m1,m5,m9,m13, m2,m6,m10,m14, m3,m7,m11,m15 };
   return m;
 }
+
+Matrix* CreateMatrixWrapper() {
+  Matrix *mat = (Matrix*)malloc(sizeof(Matrix));
+  if (mat) {
+    *mat = (Matrix){0};
+  }
+  return mat;
+}
+
 
 Rectangle* CreateRectangle(float x, float y, float width, float height) {
   Rectangle* r = malloc(sizeof(Rectangle));
@@ -99,6 +109,20 @@ void SetMaterialColors(Model *model, Color diffuse, Color specular, Color ambien
     mat->maps[MATERIAL_MAP_NORMAL].color = normal;
   }
 }
+  
+void SetMaterialShader(Model *model, Shader *shader) {
+  if (!model || !shader) return;
+
+  model->materials[0].shader = *shader;
+
+  // Optional: initialize all material maps to default textures/colors
+  // for (int i = 0; i < MATERIAL_MAP_COUNT; i++) {
+  //   model->materials[0].maps[i].texture = GetTextureDefault();
+  //   model->materials[0].maps[i].color = WHITE;
+  //   model->materials[0].maps[i].value = 1.0f;
+  // }
+}
+
 
 void SetMaterialTextures(Model *model, Texture2D* diffuse, Texture2D* specular, Texture2D* normal, Texture2D* emission) {
   if (!model) return;
@@ -111,6 +135,15 @@ void SetMaterialTextures(Model *model, Texture2D* diffuse, Texture2D* specular, 
   }
 }
 
+
+void GetLightViewProj(Camera3D *lightCam, Matrix *outMatrix) {
+  if (!lightCam || !outMatrix) return;
+
+  Matrix view = MatrixLookAt(lightCam->position, lightCam->target, lightCam->up);
+  Matrix proj = MatrixPerspective(lightCam->fovy * DEG2RAD, 1.0f, 0.1f, 100.0f);
+  
+  *outMatrix = MatrixMultiply(proj, view);
+}
 
 Camera3D* CreateCamera3DDefault(Vector3 *position, Vector3 *target, Vector3* up, float fovy, int projection) {
   Camera3D* c = malloc(sizeof(Camera3D));

@@ -33,12 +33,10 @@ gui::window::createCamera()
 gui::shadow::init()
 
 cube = gui::components::Cube::new 1, 1, 1, 0xFF00FF00
-cube2 = gui::components::Cube::new 10, 0.1, 10, 0xFF00FF00
+cube2 = gui::components::Cube::new 10, 0.1, 10, 0xFFDDDDDD
+cube2.pos.y = -1
 
-gui::window::add cube
-
-rew::channel::timeout 1000, ->
-  gui::window::setCameraPosition 10, 0, 0
+gui::window::add cube, cube2
 
 gui::events.on 'loop', (time) ->
   # cube.rot.x += 0.1

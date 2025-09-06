@@ -6,6 +6,7 @@ const getFfiFor = require('./get_ffi_value.js');
 const getDeclarations = require('./define_consts.js');
 
 const first = `#include "raylib.h"
+#include "raymath.h"
 
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"

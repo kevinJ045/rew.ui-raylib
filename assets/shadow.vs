@@ -1,21 +1,35 @@
-#version 330
+#version 330 core
 
-in vec3 vertexPosition;
-in vec3 vertexNormal;
-in vec2 vertexTexCoord;
 
-uniform mat4 mvp;              // Model-View-Projection
-uniform mat4 lightViewProj;    // Light camera view-proj matrix
-uniform mat4 matModel;         // Model matrix
+layout(location = 0) in vec3 vertexPosition;
+layout(location = 1) in vec3 vertexNormal;
+layout(location = 2) in vec2 vertexTexCoord;
+
+
+uniform mat4 model;           
+uniform mat4 view;            
+uniform mat4 projection;      
+uniform mat4 lightViewProj;   
+
 
 out vec3 fragNormal;
 out vec2 fragTexCoord;
 out vec4 fragPosLight;
 
-void main() {
-    fragNormal = mat3(matModel) * vertexNormal;
+void main()
+{
+    
+    vec4 worldPos = model * vec4(vertexPosition, 1.0);
+
+    
+    fragNormal = mat3(transpose(inverse(model))) * vertexNormal;
+
+    
     fragTexCoord = vertexTexCoord;
 
-    fragPosLight = lightViewProj * vec4(vertexPosition, 1.0);
-    gl_Position = mvp * vec4(vertexPosition, 1.0);
+    
+    fragPosLight = lightViewProj * worldPos;
+
+    
+    gl_Position = projection * view * worldPos;
 }
