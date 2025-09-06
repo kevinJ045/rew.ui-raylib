@@ -33,6 +33,7 @@ gui::window::createCamera()
 gui::shadow::init()
 
 cube = gui::components::Cube::new 1, 1, 1, 0xFF00FF00
+cube2 = gui::components::Cube::new 10, 0.1, 10, 0xFF00FF00
 
 gui::window::add cube
 
