@@ -53,6 +53,10 @@ module.exports = function makeWrappers(name){
 
     "AutomationEvent",
     "AutomationEventList",
+
+    "Texture2D",
+    "RenderTexture2D",
+    "TextureCubemap",
   ];
 
   function isStruct(type,name) {

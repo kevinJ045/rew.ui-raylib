@@ -12,4 +12,7 @@ gui::components::Text = Text;
 import { Button } from "./button.coffee";
 gui::components::Button = Button;
 
+import { Cube } from "./cube.coffee";
+gui::components::Cube = Cube;
+
 

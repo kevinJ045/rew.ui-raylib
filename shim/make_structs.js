@@ -13,6 +13,12 @@ Vector3* CreateVector3(float x, float y, float z) {
   return v;
 }
 
+void SetVector3Vals(Vector3 *vec3, float x, float y, float z) {
+  vec3->x = x;
+  vec3->y = y;
+  vec3->z = z;
+}
+
 Vector4* CreateVector4(float x, float y, float z, float w) {
   Vector4* v = malloc(sizeof(Vector4));
   *v = (Vector4){ x, y, z, w };
@@ -64,6 +70,44 @@ Camera3D* CreateCamera3D(Vector3 *position, Vector3 *target, float fovy) {
 
   return c;
 }
+
+void SetCamera3DVal(Camera3D* c, Vector3 *position, Vector3 *target, float fovy) {
+  c->position = *position;
+  c->target = *target;
+  c->up = (Vector3){0.0f, 1.0f, 0.0f};
+  c->fovy = fovy;
+  c->projection = CAMERA_PERSPECTIVE;
+}
+
+void SetMaterialColors(Model *model, Color diffuse, Color specular, Color ambient, Color emission, Color normal) {
+  if (!model) return;
+
+  for (int i = 0; i < model->materialCount; i++) {
+    Material *mat = &model->materials[i];
+
+    mat->maps[MATERIAL_MAP_DIFFUSE].color = diffuse;
+
+    mat->maps[MATERIAL_MAP_SPECULAR].color = specular;
+
+    mat->maps[MATERIAL_MAP_OCCLUSION].color = ambient;
+
+    mat->maps[MATERIAL_MAP_EMISSION].color = emission;
+
+    mat->maps[MATERIAL_MAP_NORMAL].color = normal;
+  }
+}
+
+void SetMaterialTextures(Model *model, Texture2D* diffuse, Texture2D* specular, Texture2D* normal, Texture2D* emission) {
+  if (!model) return;
+
+  for (int i = 0; i < model->materialCount; i++) {
+    model->materials[i].maps[MATERIAL_MAP_DIFFUSE].texture = *diffuse;
+    model->materials[i].maps[MATERIAL_MAP_SPECULAR].texture = *specular;
+    model->materials[i].maps[MATERIAL_MAP_NORMAL].texture = *normal;
+    model->materials[i].maps[MATERIAL_MAP_EMISSION].texture = *emission;
+  }
+}
+
 
 Camera3D* CreateCamera3DDefault(Vector3 *position, Vector3 *target, Vector3* up, float fovy, int projection) {
   Camera3D* c = malloc(sizeof(Camera3D));

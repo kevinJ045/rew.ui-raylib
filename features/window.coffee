@@ -10,6 +10,9 @@ using namespace gui::consts::;
 width = 800;
 height = 600;
 
+camera = null;
+campos = null;
+camtarget = null;
 
 Object.defineProperty(gui::window::, 'width', {
   get: -> width,
@@ -23,6 +26,10 @@ Object.defineProperty(gui::window::, 'height', {
   set: (h) ->
     height = h;
     SetWindowSize(width, height)
+});
+
+Object.defineProperty(gui::window::, 'camera', {
+  get: -> camera,
 });
 
 listener.on 'resize', (w, h) ->
@@ -48,6 +55,18 @@ function gui::window::add(...components){
   components.forEach (component) =>
     Registry[component._type].push(component);
     component.parent = { _children: Registry[component._type] }
+}
+
+function gui::window::createCamera(){
+  campos = CreateVector3 5, 1, 5
+  camtarget = CreateVector3 0, 0, 0
+  camera = CreateCamera3D campos, camtarget, 45.0
+}
+
+function gui::window::setCameraPosition(x, y, z){
+  FreePTRVal campos
+  campos = CreateVector3 x, y, z
+  SetCamera3DVal camera, campos, camtarget, 45.0
 }
 
 function gui::window::close(){

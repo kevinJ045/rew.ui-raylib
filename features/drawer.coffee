@@ -6,37 +6,36 @@ using namespace gui::raylib;
 using namespace gui::consts::;
 
 listener.on 'loop', (time) ->
+
+  color = if listener._color is null or listener._color is undefined then 0xFFFFFFFF else listener._color 
   
   BeginDrawing()
-  
-  ClearBackground if listener._color is null or listener._color is undefined then 0xFFFFFFFF else listener._color 
+      
+  ClearBackground color
   
   Registry['2d'].forEach (item) ->
     item.draw(time)
     item.emitter.emit('draw', time)
 
+  
+  if gui::shadow::active
+    BeginTextureModeWrapper gui::shadow::_texture
+    ClearBackground color
+    BeginMode3DWrapper gui::shadow::camera
+    
+    Registry['3d'].forEach (item) ->
+      item.draw(time)
 
-  # BeginMode3DWrapper cam
+    EndMode3D()
+    EndTextureMode()
 
+  if gui::window::camera
+    BeginMode3DWrapper gui::window::camera
+    
+    Registry['3d'].forEach (item) ->
+      item.draw(time)
+      item.emitter.emit('draw', time)
 
-  # # rect = GuiCreateRectangle 300, 200, 100, 30
+    EndMode3D()
 
-  # # print ptr::readStruct rect, { x: 'u32' }
-  # # rlPushMatrix()
-  # # rlTranslatef(0, 0, 0)
-  # # rlRotatef(r1, 1, 0, 0)
-  # # rlRotatef(r2, 0, 1, 0)
-  # # rlRotatef(r3, 0, 0, 1)
-  # # DrawCubeVWrapper pos, sv, RAYCOL
-
-  # rot = CreateVector3 0, 1, 0
-  # UpdateModelAnimationWrapper2 model, animations, 7, frame
-  # DrawModelExWrapper model, pos, rot, r2, sv, 0xFFFFFFFF
-  # # rlPopMatrix()
-
-  # r2 += 0.1
-
-  # frame += 1
-
-  # EndMode3D()
   EndDrawing()

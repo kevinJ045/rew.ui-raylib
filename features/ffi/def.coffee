@@ -5,8 +5,10 @@ using namespace rew::ns;
 raylib_funcs = instantiate class extends raylib_funcs_auto
   ffi_type(ffi::f32, ffi::f32) CreateVector2 = -> ffi::ptr
   ffi_type(ffi::f32, ffi::f32, ffi::f32) CreateVector3 = -> ffi::ptr
+  ffi_type(ffi::ptr, ffi::f32, ffi::f32, ffi::f32) SetVector3Vals = -> ffi::ptr
   ffi_type(ffi::f32, ffi::f32, ffi::f32, ffi::f32) CreateRectangle = -> ffi::ptr
   ffi_type(ffi::ptr, ffi::ptr, ffi::f32) CreateCamera3D = -> ffi::ptr
+  ffi_type(ffi::ptr, ffi::ptr, ffi::ptr, ffi::f32) SetCamera3DVal = -> ffi::ptr
 
   ffi_type(ffi::ptr) FreePTRVal = -> ffi::void
 
@@ -18,6 +20,8 @@ raylib_funcs = instantiate class extends raylib_funcs_auto
   ffi_type(ffi::f32, ffi::f32, ffi::f32) rlTranslatef = -> ffi::void
   ffi_type(ffi::f32, ffi::f32, ffi::f32, ffi::f32) rlRotatef = -> ffi::void
   ffi_type(ffi::f32, ffi::f32, ffi::f32) rlScalef = -> ffi::void
+
+  ffi_type(ffi::ptr, ffi::u64, ffi::u64, ffi::u64, ffi::u64, ffi::u64) SetMaterialColors = -> ffi::void
 
 raylib = rew::ffi::open './.artifacts/librayshim.so', raylib_funcs
 

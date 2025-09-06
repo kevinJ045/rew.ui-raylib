@@ -1,17 +1,3 @@
-package gui;
-
-# STD Libraries
-import "./_std.coffee";
-
-# Main Libraries
-import "./features/const.coffee";
-import "./features/utils.coffee";
-import raylib from "./features/ffi.coffee";
-ui::raylib = raylib;
-
-import "./features/loop.coffee";
-
-
 import "#std.ffi!";
 import "#std.encoding!";
 import "#std.types!";

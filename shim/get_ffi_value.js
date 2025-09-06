@@ -50,6 +50,10 @@ module.exports = function getFfiFor(name, functions){
 
     "AutomationEvent",
     "AutomationEventList",
+
+    "Texture2D",
+    "RenderTexture2D",
+    "TextureCubemap",
   ];
 
   function isStruct(type,name) {
