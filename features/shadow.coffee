@@ -13,6 +13,13 @@ lightDir = null
 lightDirLoc = null
 lightVPLoc = null
 shadowMapLoc = null
+ambientLoc = null
+
+ambient_data = [
+  0.5, 0.5, 0.5, 0.1
+]
+
+ambient_intensity = 0.02
 
 shadow::init = (size = 1024) ->
   shadow::_shader = LoadShaderWrapper ^'assets/shadow.vs\0', ^'assets/shadow.fs\0'
@@ -20,7 +27,7 @@ shadow::init = (size = 1024) ->
   
   # Look at this if it fails
   b = ^"viewPos\0"
-  SetShaderLocVectorView(shadow::_shader, b);
+  SetShaderLoc(shadow::_shader, SHADER_LOC_VECTOR_VIEW, b);
   viewPos = GetShaderLocationWrapper(shadowShader, b)
 
   lightDir = Vector3NormalizeW CreateVector3 0.35, -1.0, -0.35
@@ -34,9 +41,7 @@ shadow::init = (size = 1024) ->
   SetShaderValueWrapper(shadowShader, lightColLoc, ColorNormalizeW(lightColor), SHADER_UNIFORM_VEC4);
 
   ambientLoc = GetShaderLocationWrapper(shadowShader, ^"ambient\0");
-  ambient = new Float32Array([
-    0.5, 0.5, 0.5, 0.1
-  ])
+  ambient = new Float32Array(ambient_data)
   SetShaderValueWrapper(shadowShader, ambientLoc, &ambient, SHADER_UNIFORM_VEC4);
 
 
@@ -53,6 +58,18 @@ shadow::init = (size = 1024) ->
 
   shadow::camera = camera
   shadow::active = true
+
+shadow::setAmbient = (a) ->
+  ambient_data = a
+
+  ambient = new Float32Array(ambient)
+  SetShaderValueWrapper(shadow::_shader, ambientLoc, &ambient, SHADER_UNIFORM_VEC4);
+
+shadow::setAmbientIntensity = (a) ->
+  ambient_intensity = a
+
+shadow::getAmbient = -> ambient_data
+shadow::getAmbientIntensity = -> ambient_intensity
 
 shadow::update = (lightView, lightProj) ->
   lightDir = Vector3NormalizeW(lightDir);

@@ -32,6 +32,10 @@ Object.defineProperty(gui::window::, 'camera', {
   get: -> camera,
 });
 
+Object.defineProperty(gui::window::, 'campos', {
+  get: -> rew::ptr::readStruct campos, { 'x': 'f32', 'y': 'f32', 'z': 'f32' }
+});
+
 listener.on 'resize', (w, h) ->
   width = w;
   height = h;

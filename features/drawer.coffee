@@ -9,6 +9,8 @@ listener.on 'loop', (time) ->
 
   color = if listener._color is null or listener._color is undefined then 0xFFFFFFFF else listener._color 
   
+  gui::material::update()
+
   BeginDrawing()
       
   ClearBackground color

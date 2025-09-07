@@ -11,6 +11,24 @@
 #include <stdlib.h>
 
 
+
+typedef struct {
+    int type;
+    int enabled;
+    Vector3 position;
+    Vector3 target;
+    float color[4];
+    float intensity;
+
+    int typeLoc;
+    int enabledLoc;
+    int positionLoc;
+    int targetLoc;
+    int colorLoc;
+    int intensityLoc;
+} LightPBR;
+  
+
 Vector2* CreateVector2(float x, float y) {
   Vector2* v = malloc(sizeof(Vector2));
   *v = (Vector2){ x, y };
@@ -162,10 +180,19 @@ void SetMaterialColors(Model *model, Color diffuse, Color specular, Color ambien
   }
 }
   
+
+void SetMaterialShaderByIndex(Model *model, Shader *shader, int index) {
+  if (!model || !shader) return;
+
+  model->materials[index].shader = *shader;
+}
+
 void SetMaterialShader(Model *model, Shader *shader) {
   if (!model || !shader) return;
 
-  model->materials[0].shader = *shader;
+  for (int i = 0; i < model->materialCount; i++) {
+    SetMaterialShaderByIndex(model, shader, i);
+  }
 
   // Optional: initialize all material maps to default textures/colors
   // for (int i = 0; i < MATERIAL_MAP_COUNT; i++) {
@@ -174,7 +201,6 @@ void SetMaterialShader(Model *model, Shader *shader) {
   //   model->materials[0].maps[i].value = 1.0f;
   // }
 }
-
 
 void SetMaterialTextures(Model *model, Texture2D* diffuse, Texture2D* specular, Texture2D* normal, Texture2D* emission) {
   if (!model) return;
@@ -187,6 +213,29 @@ void SetMaterialTextures(Model *model, Texture2D* diffuse, Texture2D* specular, 
   }
 }
 
+void SetMaterialMapValueByIndex(Model *model, int index, int id, const char* type, void* value) {
+  if (!model) return;
+
+  MaterialMap *map = &model->materials[index].maps[id];
+
+  if (strcmp(type, "texture") == 0) {
+    map->texture = *(Texture2D *)value;
+  }
+  else if (strcmp(type, "color") == 0) {
+    map->color = *(Color *)value;
+  }
+  else if (strcmp(type, "value") == 0) {
+    map->value = *(float *)value;
+  }
+}
+
+void SetMaterialMapValue(Model *model, int id, const char* type, void* value) {
+  if (!model) return;
+
+  for (int i = 0; i < model->materialCount; i++) {
+    SetMaterialMapValueByIndex(model, i, id, type, value);
+  }
+}
 
 void GetLightViewProj(Camera3D *lightCam, Matrix *outMatrix) {
   if (!lightCam || !outMatrix) return;
@@ -226,8 +275,8 @@ void UpdateModelAnimationWrapper2(Model *model, ModelAnimation *anim, int index,
 }
 
 
-void SetShaderLocVectorView(Shader *shader, const char *name){
-  shader->locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(*shader, name);
+void SetShaderLoc(Shader *shader, int id, const char *name){
+  shader->locs[id] = GetShaderLocation(*shader, name);
 }
 
 RenderTexture2D* LoadShadowmapRenderTexture(int width, int height)
@@ -291,6 +340,61 @@ void DoStuffPls(Shader *shadowShader, RenderTexture2D *shadowMap, int shadowMapL
   rlEnableTexture(shadowMap->depth.id);
   rlSetUniform(shadowMapLoc, &slot, SHADER_UNIFORM_INT, 1);
 }
+
+static int lightCount = 0;
+
+void UpdateLightPBR(Shader *shader_ptr, LightPBR *light_ptr)
+{
+  LightPBR light = *light_ptr;
+  Shader shader = *shader_ptr;
+
+  SetShaderValue(shader, light.enabledLoc, &light.enabled, SHADER_UNIFORM_INT);
+  SetShaderValue(shader, light.typeLoc, &light.type, SHADER_UNIFORM_INT);
+
+  float position[3] = { light.position.x, light.position.y, light.position.z };
+  SetShaderValue(shader, light.positionLoc, position, SHADER_UNIFORM_VEC3);
+
+  float target[3] = { light.target.x, light.target.y, light.target.z };
+  SetShaderValue(shader, light.targetLoc, target, SHADER_UNIFORM_VEC3);
+  SetShaderValue(shader, light.colorLoc, light.color, SHADER_UNIFORM_VEC4);
+  SetShaderValue(shader, light.intensityLoc, &light.intensity, SHADER_UNIFORM_FLOAT);
+}
+
+LightPBR* CreateLightPBR(int maxl, int type, Vector3 *position, Vector3 *target, Color color, float intensity, Shader *shader)
+{
+  LightPBR* light = malloc(sizeof(LightPBR));
+
+  if (lightCount < maxl)
+  {
+    light->enabled = 1;
+    light->type = type;
+    light->position = *position;
+    light->target = *target;
+    light->color[0] = (float)color.r/255.0f;
+    light->color[1] = (float)color.g/255.0f;
+    light->color[2] = (float)color.b/255.0f;
+    light->color[3] = (float)color.a/255.0f;
+    light->intensity = intensity;
+
+    light->enabledLoc = GetShaderLocation(*shader, TextFormat("lights[%i].enabled", lightCount));
+    light->typeLoc = GetShaderLocation(*shader, TextFormat("lights[%i].type", lightCount));
+    light->positionLoc = GetShaderLocation(*shader, TextFormat("lights[%i].position", lightCount));
+    light->targetLoc = GetShaderLocation(*shader, TextFormat("lights[%i].target", lightCount));
+    light->colorLoc = GetShaderLocation(*shader, TextFormat("lights[%i].color", lightCount));
+    light->intensityLoc = GetShaderLocation(*shader, TextFormat("lights[%i].intensity", lightCount));
+
+    UpdateLightPBR(shader, light);
+
+    lightCount++;
+  }
+
+  return light;
+}
+
+void SetLightPBRPos(LightPBR *light, Vector3 *position){
+  light->position = *position;
+}
+
 
 
 Wave* LoadWaveWrapper(const char *fileName) {

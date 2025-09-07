@@ -22,6 +22,10 @@ raylib_funcs = instantiate class extends raylib_funcs_auto
   ffi_type() GetMatrixProjectionWrapper = -> ffi::ptr
   ffi_type(ffi::ptr, ffi::ptr) MatrixMultiplyW = -> ffi::ptr
 
+  ffi_type(ffi::ptr, ffi::ptr) SetLightPBRPos = -> ffi::void
+  ffi_type(ffi::ptr, ffi::ptr) UpdateLightPBR = -> ffi::void
+  ffi_type(ffi::u32, ffi::u32, ffi::ptr, ffi::ptr, ffi::u64, ffi::f32, ffi::ptr) CreateLightPBR = -> ffi::ptr
+
   ffi_type(ffi::ptr, ffi::f32) Vector3ScaleW = -> ffi::ptr
   ffi_type(ffi::ptr) Vector3NormalizeW = -> ffi::ptr
   ffi_type(ffi::u64) ColorNormalizeW = -> ffi::ptr
@@ -29,13 +33,15 @@ raylib_funcs = instantiate class extends raylib_funcs_auto
   ffi_type(ffi::ptr, ffi::i32) UpdateCamera = -> rew::ffi::void
   ffi_type(ffi::ptr, ffi::i32, ffi::ptr, ffi::i32) SetShaderValueWrapper = -> ffi::void
   ffi_type(ffi::ptr, ffi::ptr) GetLightViewProj = -> ffi::void
-  ffi_type(ffi::ptr, ffi::buffer) SetShaderLocVectorView = -> ffi::void
+  ffi_type(ffi::ptr, ffi::u32, ffi::buffer) SetShaderLoc = -> ffi::void
 
   ffi_type(ffi::ptr, ffi::ptr) LoadModelAnimations = -> ffi::ptr
   ffi_type(ffi::ptr, ffi::ptr) SetMaterialShader = -> ffi::void
   ffi_type(ffi::ptr, ffi::ptr, ffi::i32, ffi::i32) UpdateModelAnimationWrapper2 = -> ffi::ptr
   ffi_type(ffi::ptr) GetCameraPosition = -> ffi::ptr
   ffi_type(ffi::ptr, ffi::ptr, ffi::u32) DoStuffPls = -> ffi::ptr
+
+  ffi_type(ffi::ptr, ffi::u32, ffi::buffer, ffi::ptr) SetMaterialMapValue = -> ffi::ptr
 
   ffi_type() rlPushMatrix = -> ffi::void
   ffi_type() rlPopMatrix = -> ffi::void
