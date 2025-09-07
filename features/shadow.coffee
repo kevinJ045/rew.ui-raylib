@@ -19,7 +19,7 @@ ambient_data = [
   0.5, 0.5, 0.5, 0.1
 ]
 
-ambient_intensity = 0.5
+ambient_intensity = 0.02
 
 shadow::init = (size = 1024) ->
   shadow::_shader = LoadShaderWrapper ^'assets/shadow.vs\0', ^'assets/shadow.fs\0'

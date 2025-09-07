@@ -4,30 +4,25 @@ using namespace rew::ns;
 using namespace gui::raylib;
 
 @{Component('3d')}
-function Cube(
-  @w,
-  @h,
-  @d,
+function Model(
+  @model,
   @color = 0xFFFFFFFF,
-  @model_path
 )
   @pos = { x: 0, y: 0, z: 0 }
   @rot = { x: 0, y: 0, z: 0 }
   @scale = { x: 1, y: 1, z: 1 }
-  @model = if @model_path then LoadModelWrapper ^"#{@model_path}\0" else LoadModelFromMeshWrapper GenMeshCubeWrapper @w, @h, @d
   SetMaterialColors @model, @color, 0xff000000, 0xffffff00, 0xff000000, 0xffffff00
 
   if gui::shadow::_shader
     SetMaterialShader @model, gui::shadow::_shader
 
-function Cube::mat(options)
+function Model::mat(options)
   @material = gui::material::new options
   @material.apply(@model)
 
-function Cube::draw(time, shadow_instance)
+function Model::draw(time, shadow_instance)
 
   unless shadow_instance
-    print 'Drawing', @model_path
     @material?.update(time)
 
   pos = CreateVector3 @pos.x, @pos.y, @rot.z
@@ -38,4 +33,12 @@ function Cube::draw(time, shadow_instance)
   FreePTRVal pos
   FreePTRVal rot
 
-export { Cube }
+function Model::from(model_path, color = 0xFFFFFFFF)
+  model = LoadModelWrapper ^"#{model_path}\0"
+  Model::new model, color
+
+function Model::cube(w, h, d, color = 0xFFFFFFFF)
+  model = LoadModelFromMeshWrapper GenMeshCubeWrapper w, h, d
+  Model::new model, color
+
+export { Model }

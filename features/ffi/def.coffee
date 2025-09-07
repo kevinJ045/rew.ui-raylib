@@ -8,6 +8,7 @@ raylib_funcs = instantiate class extends raylib_funcs_auto
 
   ffi_type(ffi::f32, ffi::f32) CreateVector2 = -> ffi::ptr
   ffi_type(ffi::f32, ffi::f32, ffi::f32) CreateVector3 = -> ffi::ptr
+  ffi_type(ffi::f32, ffi::f32, ffi::f32, ffi::f32) CreateVector4 = -> ffi::ptr
   ffi_type(ffi::ptr, ffi::f32, ffi::f32, ffi::f32) SetVector3Vals = -> ffi::ptr
   ffi_type(ffi::f32, ffi::f32, ffi::f32, ffi::f32) CreateRectangle = -> ffi::ptr
   ffi_type(ffi::ptr, ffi::ptr, ffi::f32) CreateCamera3D = -> ffi::ptr

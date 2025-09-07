@@ -34,13 +34,13 @@ gui::window::camera_orbital = true
 
 # gui::shadow::init()
 
-cube2 = gui::components::Cube::new 10, 0.1, 10, 0xFFFFFFFF, '.artifacts/plane.glb'
+cube2 = gui::components::Model::from '.artifacts/plane.glb'
 cube2.pos.y = -0.1
 cube2.scale.x = 5
 cube2.scale.y = 5
 cube2.scale.z = 5
 
-cube = gui::components::Cube::new 1, 1, 1, 0xFFDDDDDD, '.artifacts/old_car_new.glb'
+cube = gui::components::Model::from '.artifacts/old_car_new.glb'
 cube.scale.x = 0.25
 cube.scale.y = 0.25
 cube.scale.z = 0.25
@@ -76,10 +76,10 @@ cube.mat {
   textureTiling: CreateVector2(0.5, 0.5)
 }
 
-gui::material::light 1, { x: -4.0, y: 5.0, z: -4.0 }, { x: 0, y: 0, z: 0 }, 0xFF00FFFF, 4.0
-gui::material::light 1, { x: 5.0, y: 6.0, z: 2.0 }, { x: 0, y: 0, z: 0 }, 0xFF00FF00, 3.3
-gui::material::light 1, { x: -3.0, y: 3.0, z: 5.0 }, { x: 0, y: 0, z: 0 }, 0xFF0000FF, 8.3
-gui::material::light 1, { x: 5.0, y: 2.0, z: -5.0 }, { x: 0, y: 0, z: 0 }, 0xFFFF0000, 2.0
+gui::material::light 1, { x: -1.0, y: 1.0, z: -2.0 }, { x: 0, y: 0, z: 0 }, 0xFF00FFFF, 4.0
+gui::material::light 1, { x: 2.0, y: 1.0, z: 1.0 }, { x: 0, y: 0, z: 0 }, 0xFF00FF00, 3.3
+gui::material::light 1, { x: -2.0, y: 1.0, z: 1.0 }, { x: 0, y: 0, z: 0 }, 0xFF3729E6, 8.3
+gui::material::light 1, { x: 1.0, y: 1.0, z: -1.0 }, { x: 0, y: 0, z: 0 }, 0xFFFF0000, 2.0
 
 gui::window::add cube2, cube
 

@@ -42,7 +42,7 @@ function init()
   numLightsLoc = GetShaderLocationWrapper(shader, ^"numOfLights\0")
   SetShaderValueWrapper(shader, numLightsLoc, &(new Int32Array([MAX_LIGHTS])), SHADER_UNIFORM_INT)
 
-  usage = 1;
+  usage = new Int32Array [1];
   SetShaderValueWrapper(shader, GetShaderLocationWrapper(shader, ^"useTexAlbedo\0"), &usage, SHADER_UNIFORM_INT);
   SetShaderValueWrapper(shader, GetShaderLocationWrapper(shader, ^"useTexNormal\0"), &usage, SHADER_UNIFORM_INT);
   SetShaderValueWrapper(shader, GetShaderLocationWrapper(shader, ^"useTexMRA\0"), &usage, SHADER_UNIFORM_INT);
@@ -80,11 +80,11 @@ function Material::apply(model)
   value = ^'value\0'
   texture = ^'texture\0'
 
-  SetMaterialMapValue model, MATERIAL_MAP_ALBEDO, color, &(@options.albedo)
+  SetMaterialMapValue model, MATERIAL_MAP_ALBEDO, color, &(new Int32Array([@options.albedo]))
   SetMaterialMapValue model, MATERIAL_MAP_METALNESS, value, &(@options.metallic)
   SetMaterialMapValue model, MATERIAL_MAP_ROUGHNESS, value, &(@options.roughness)
   SetMaterialMapValue model, MATERIAL_MAP_OCCLUSION, value, &(@options.occlusion)
-  SetMaterialMapValue model, MATERIAL_MAP_EMISSION, color, &(@options.emission)
+  SetMaterialMapValue model, MATERIAL_MAP_EMISSION, color, &(new Int32Array([@options.emission]))
 
   SetMaterialMapValue model, MATERIAL_MAP_ALBEDO, texture, @options.albedoMap if @options.albedoMap
   SetMaterialMapValue model, MATERIAL_MAP_METALNESS, texture, @options.metalMap if @options.metalMap
