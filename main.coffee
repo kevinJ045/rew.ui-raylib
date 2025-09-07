@@ -55,7 +55,10 @@ cube.mat {
   textureTiling: CreateVector2(0.5, 0.5)
 }
 
-gui::material::light 1, { x: 1.0, y: 1.0, z: 2.0 }, { x: 0, y: 0, z: 0 }, 0xFF00FFFF, 4.0
+gui::material::light 1, { x: -1.0, y: 1.0, z: -2.0 }, { x: 0, y: 0, z: 0 }, 0xFF00FFFF, 4.0
+gui::material::light 1, { x: 2.0, y: 1.0, z: 1.0 }, { x: 0, y: 0, z: 0 }, 0xFF00FFFF, 4.0
+gui::material::light 1, { x: -2.0, y: 1.0, z: 1.0 }, { x: 0, y: 0, z: 0 }, 0xFF00FFFF, 4.0
+gui::material::light 1, { x: 1.0, y: 1.0, z: -2.0 }, { x: 0, y: 0, z: 0 }, 0xFF00FFFF, 4.0
 
 gui::window::add cube, cube2
 
