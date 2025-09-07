@@ -60,7 +60,7 @@ module.exports = function makeWrappers(name){
   ];
 
   function isStruct(type,name) {
-    return name?.startsWith('*') ? false : structs.includes(type.replace(/\s*\*/g, "").trim());
+    return name?.startsWith('*') || type?.endsWith('*') ? false : structs.includes(type.replace(/\s*\*/g, "").trim());
   }
 
   const functions = [];

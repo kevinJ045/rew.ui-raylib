@@ -12,26 +12,29 @@ listener.on 'loop', (time) ->
   BeginDrawing()
       
   ClearBackground color
-  
-  Registry['2d'].forEach (item) ->
+
+  Registry['2d'].filter((item) -> item.layer == -1).forEach (item) ->
     item.draw(time)
     item.emitter.emit('draw', time)
 
-  
   if gui::shadow::active
     BeginTextureModeWrapper gui::shadow::_texture
     ClearBackground color
     BeginMode3DWrapper gui::shadow::camera
+
+    lightView = GetMatrixModelviewWrapper();
+    lightProj = GetMatrixProjectionWrapper();
     
     Registry['3d'].forEach (item) ->
-      item.draw(time)
+      item.draw(time, true)
 
     EndMode3D()
     EndTextureMode()
 
-    gui::shadow::update()
+    gui::shadow::update(lightView, lightProj)
 
   if gui::window::camera
+    UpdateCamera(gui::window::camera, gui::consts::CAMERA_ORBITAL) if gui::window::camera_orbital
     BeginMode3DWrapper gui::window::camera
     
     Registry['3d'].forEach (item) ->
@@ -39,5 +42,9 @@ listener.on 'loop', (time) ->
       item.emitter.emit('draw', time)
 
     EndMode3D()
+
+  Registry['2d'].filter((item) -> item.layer > -1).forEach (item) ->
+    item.draw(time)
+    item.emitter.emit('draw', time)
 
   EndDrawing()

@@ -16,18 +16,22 @@ function Cube(
   @model = LoadModelFromMeshWrapper GenMeshCubeWrapper @w, @h, @d
   SetMaterialColors @model, @color, 0xff000000, 0xffffff00, 0xff000000, 0xffffff00
 
-  # if gui::shadow::_shader
-  #   SetMaterialShader @model, gui::shadow::_shader
+  if gui::shadow::_shader
+    SetMaterialShader @model, gui::shadow::_shader
 
 function Cube::draw(time)
-  pos = CreateVector3 @pos.x, @pos.y, @pos.z
-  rlPushMatrix()
-  rlTranslatef(0, 0, 0)
-  rlRotatef(@rot.x, 1, 0, 0)
-  rlRotatef(@rot.y, 0, 1, 0)
-  rlRotatef(@rot.z, 0, 0, 1)
-  DrawModelWrapper @model, pos, @scale.x, 0xFFFFFFFF
-  rlPopMatrix()
+  pos = CreateVector3 @pos.x, @pos.y, @rot.z
+  rot = CreateVector3 @rot.x, @rot.y, @pos.z
+  scale = CreateVector3 @scale.x, @scale.y, @scale.z
+  # rlPushMatrix()
+  # rlTranslatef(0, 0, 0)
+  # rlRotatef(@rot.x, 1, 0, 0)
+  # rlRotatef(@rot.y, 0, 1, 0)
+  # rlRotatef(@rot.z, 0, 0, 1)
+  DrawModelExWrapper @model, pos, rot, 0.0, scale, 0xFFFFFFFF
+  # rlPopMatrix()
+  FreePTRVal scale
   FreePTRVal pos
+  FreePTRVal rot
 
 export { Cube }

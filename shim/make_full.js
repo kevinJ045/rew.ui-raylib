@@ -7,11 +7,17 @@ const getDeclarations = require('./define_consts.js');
 
 const first = `#include "raylib.h"
 #include "raymath.h"
+#include "rlgl.h"
+
+#define RLIGHTS_IMPLEMENTATION
+#include "rlights.h"
 
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
 
-#include <stdlib.h>`;
+#include <stdlib.h>
+
+`;
 
 
 const nodes = fs.readdirSync('raylib.h')

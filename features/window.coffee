@@ -58,6 +58,11 @@ function gui::window::add(...components){
 }
 
 function gui::window::createCamera(){
+
+  # campos = CreateVector3 0, 5, 0
+  # camtarget = CreateVector3 0, 0, 0
+  # up = CreateVector3 0.0, 1.0, 0.0
+  # camera = CreateCamera3DDefault campos, camtarget, up, 45.0, gui::consts::CAMERA_PERSPECTIVE
   campos = CreateVector3 5, 1, 5
   camtarget = CreateVector3 0, 0, 0
   camera = CreateCamera3D campos, camtarget, 45.0

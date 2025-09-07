@@ -25,10 +25,11 @@ using namespace raylib
 #   rew::channel::timeout 1000, ->
 #     gui::loop::stop()
 
-gui::window::init("Hello!")
+gui::window::init("Hello!", gui::consts::FLAG_MSAA_4X_HINT)
 gui::window::background 0xFF000000
 
 gui::window::createCamera()
+gui::window::camera_orbital = true
 
 gui::shadow::init()
 
