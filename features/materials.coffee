@@ -42,7 +42,7 @@ function init()
   numLightsLoc = GetShaderLocationWrapper(shader, ^"numOfLights\0")
   SetShaderValueWrapper(shader, numLightsLoc, &(new Int32Array([MAX_LIGHTS])), SHADER_UNIFORM_INT)
 
-  int usage = 1;
+  usage = 1;
   SetShaderValueWrapper(shader, GetShaderLocationWrapper(shader, ^"useTexAlbedo\0"), &usage, SHADER_UNIFORM_INT);
   SetShaderValueWrapper(shader, GetShaderLocationWrapper(shader, ^"useTexNormal\0"), &usage, SHADER_UNIFORM_INT);
   SetShaderValueWrapper(shader, GetShaderLocationWrapper(shader, ^"useTexMRA\0"), &usage, SHADER_UNIFORM_INT);
@@ -68,6 +68,7 @@ DefaultOptions = const_rec {
 
 function Material(options = DefaultOptions)
   @options = { ...DefaultOptions, ...options }
+  print @options
   unless shader
     init()
   @shader = shader;
@@ -79,7 +80,6 @@ function Material::apply(model)
   value = ^'value\0'
   texture = ^'texture\0'
 
-  SetMaterialMapValue model, MATERIAL_MAP_NORMAL, color, &(@options.normal)
   SetMaterialMapValue model, MATERIAL_MAP_ALBEDO, color, &(@options.albedo)
   SetMaterialMapValue model, MATERIAL_MAP_METALNESS, value, &(@options.metallic)
   SetMaterialMapValue model, MATERIAL_MAP_ROUGHNESS, value, &(@options.roughness)
@@ -108,8 +108,8 @@ function gui::material::update()
   unless shader
     init()
   
-  cameraPos = new Float32Array(...Object.values(gui::window::campos))
-  SetShaderValueWrapper(shader, viewPos, &cameraPos, SHADER_UNIFORM_VEC3);
+  cameraPos = GetCameraPosition(gui::window::camera)
+  SetShaderValueWrapper(shader, viewPos, cameraPos, SHADER_UNIFORM_VEC3);
 
   # update all lights in shader
   for l of lights

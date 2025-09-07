@@ -15,7 +15,7 @@ function Cube(
   @rot = { x: 0, y: 0, z: 0 }
   @scale = { x: 1, y: 1, z: 1 }
   @model = if @model_path then LoadModelWrapper ^"#{@model_path}\0" else LoadModelFromMeshWrapper GenMeshCubeWrapper @w, @h, @d
-  # SetMaterialColors @model, @color, 0xff000000, 0xffffff00, 0xff000000, 0xffffff00
+  SetMaterialColors @model, @color, 0xff000000, 0xffffff00, 0xff000000, 0xffffff00
 
   if gui::shadow::_shader
     SetMaterialShader @model, gui::shadow::_shader
@@ -27,6 +27,7 @@ function Cube::mat(options)
 function Cube::draw(time, shadow_instance)
 
   unless shadow_instance
+    print 'Drawing', @model_path
     @material?.update(time)
 
   pos = CreateVector3 @pos.x, @pos.y, @rot.z
