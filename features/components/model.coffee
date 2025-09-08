@@ -38,7 +38,9 @@ function Model::from(model_path, color = 0xFFFFFFFF)
   Model::new model, color
 
 function Model::cube(w, h, d, color = 0xFFFFFFFF)
-  model = LoadModelFromMeshWrapper GenMeshCubeWrapper w, h, d
+  cubeMesh = GenMeshCubeWrapper w, h, d
+  model = LoadModelFromMeshWrapper cubeMesh
+  GenMeshTangents cubeMesh
   Model::new model, color
 
 export { Model }

@@ -10,6 +10,7 @@
 
 #include <stdlib.h>
 
+#include "texture_gen.c"
 
 
 typedef struct {

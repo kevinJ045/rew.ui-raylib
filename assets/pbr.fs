@@ -48,12 +48,24 @@ uniform float roughnessValue;
 uniform float aoValue;
 uniform float emissivePower;
 
+// Input shadowmapping values
+uniform mat4 lightVP; // Light source view-projection matrix
+uniform sampler2D shadowMap;
+
+uniform int shadowMapResolution;
+
 // Input lighting values
 uniform Light lights[MAX_LIGHTS];
 uniform vec3 viewPos;
 
 uniform vec3 ambientColor;
 uniform float ambient;
+
+struct PBRInfo {
+    vec3 color;
+    vec3 albedo;
+    vec3 emissive;
+};
 
 // Reflectivity in range 0.0 to 1.0
 // NOTE: Reflectivity is increased when surface view at larger angle
@@ -80,11 +92,17 @@ float GeomSmith(float nDotV,float nDotL,float roughness)
     return ggx1*ggx2;
 }
 
-vec3 ComputePBR()
+PBRInfo ComputePBR()
 {
-    vec3 albedo = texture(albedoMap,vec2(fragTexCoord.x*tiling.x + offset.x, fragTexCoord.y*tiling.y + offset.y)).rgb;
+    vec3 albedo;
+    if (useTexAlbedo == 1) {
+        albedo = texture(albedoMap,vec2(fragTexCoord.x*tiling.x + offset.x, fragTexCoord.y*tiling.y + offset.y)).rgb;
+    } else {
+        albedo = albedoColor.rgb;
+    }
     albedo = vec3(albedoColor.x*albedo.x, albedoColor.y*albedo.y, albedoColor.z*albedo.z);
-    
+    vec3 ambientFinal = (ambientColor + albedo)*ambient*0.5;
+
     float metallic = clamp(metallicValue, 0.0, 1.0);
     float roughness = clamp(roughnessValue, 0.0, 1.0);
     float ao = clamp(aoValue, 0.0, 1.0);
@@ -143,14 +161,53 @@ vec3 ComputePBR()
         lightAccum += ((kD*albedo.rgb/PI + spec)*radiance*nDotL)*lights[i].enabled; // Angle of light has impact on result
     }
     
-    vec3 ambientFinal = (ambientColor + albedo)*ambient*0.5;
-    
-    return (ambientFinal + lightAccum*ao + emissive);
+    PBRInfo result;
+    result.color = (lightAccum*ao + emissive);
+    result.albedo = albedo;
+    result.emissive = emissive;
+    return result;
+}
+
+float ComputeShadow() {
+    vec4 fragPosLightSpace = shadowPos;
+    fragPosLightSpace.xyz /= fragPosLightSpace.w; // Perform the perspective division
+    fragPosLightSpace.xyz = (fragPosLightSpace.xyz + 1.0)/2.0; // Transform from [-1, 1] range to [0, 1] range
+    vec2 sampleCoords = fragPosLightSpace.xy;
+    float curDepth = fragPosLightSpace.z;
+
+    // Slope-scale depth bias: depth biasing reduces "shadow acne" artifacts, where dark stripes appear all over the scene
+    // The solution is adding a small bias to the depth
+    // In this case, the bias is proportional to the slope of the surface, relative to the light
+    float bias = max(0.0002*(1.0 - dot(fragNormal, normalize(lights[0].position - fragPosition))), 0.00002) + 0.00001;
+    int shadowCounter = 0;
+    const int numSamples = 9;
+
+    // PCF (percentage-closer filtering) algorithm:
+    // Instead of testing if just one point is closer to the current point,
+    // we test the surrounding points as well
+    // This blurs shadow edges, hiding aliasing artifacts
+    vec2 texelSize = vec2(1.0/float(shadowMapResolution));
+    for (int x = -1; x <= 1; x++)
+    {
+        for (int y = -1; y <= 1; y++)
+        {
+            float sampleDepth = texture(shadowMap, sampleCoords + texelSize*vec2(x, y)).r;
+            if (curDepth - bias > sampleDepth) shadowCounter++;
+        }
+    }
+    return float(shadowCounter)/float(numSamples);
 }
 
 void main()
 {
-    vec3 color = ComputePBR();
+    PBRInfo pbr = ComputePBR();
+    vec3 albedo = pbr.albedo;
+    vec3 emissive = pbr.emissive;
+    vec3 color = pbr.color;
+
+    vec3 ambientFinal = (ambientColor + albedo)*ambient*0.5;
+
+    float shadow = ComputeShadow();
 
     // HDR tonemapping
     color = pow(color, color + vec3(1.0));
@@ -158,5 +215,5 @@ void main()
     // Gamma correction
     color = pow(color, vec3(1.0/2.2));
 
-    finalColor = vec4(color, 1.0);
+    finalColor = vec4(color, 1.0) * (1.0 - shadow) + vec4(ambientFinal, 1.0) + vec4(emissive*4.0, 1.0);
 }

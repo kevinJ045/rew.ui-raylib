@@ -17,7 +17,8 @@ MAX_LIGHTS = 4
 lights = []
 
 function init()
-  shader = LoadShaderWrapper ^'assets/pbr.vs\0', ^'assets/pbr.fs\0'
+  shader = gui::shadow::_shader
+  #LoadShaderWrapper ^'assets/pbr.vs\0', ^'assets/pbr.fs\0'
 
   SetShaderLoc shader, SHADER_LOC_MAP_ALBEDO, ^"albedoMap\0"
   SetShaderLoc shader, SHADER_LOC_MAP_METALNESS, ^"mraMap\0"

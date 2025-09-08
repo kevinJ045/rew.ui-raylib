@@ -17,6 +17,7 @@ const first = `#include "raylib.h"
 
 #include <stdlib.h>
 
+#include "texture_gen.c"
 `;
 
 

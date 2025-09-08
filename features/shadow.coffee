@@ -19,10 +19,10 @@ ambient_data = [
   0.5, 0.5, 0.5, 0.1
 ]
 
-ambient_intensity = 0.02
+ambient_intensity = 0.2
 
 shadow::init = (size = 1024) ->
-  shadow::_shader = LoadShaderWrapper ^'assets/shadow.vs\0', ^'assets/shadow.fs\0'
+  shadow::_shader = LoadShaderWrapper ^'assets/pbr.vs\0', ^'assets/pbr.fs\0'
   shadowShader = shadow::_shader
   
   # Look at this if it fails
@@ -62,7 +62,7 @@ shadow::init = (size = 1024) ->
 shadow::setAmbient = (a) ->
   ambient_data = a
 
-  ambient = new Float32Array(ambient)
+  ambient = new Float32Array(ambient_data)
   SetShaderValueWrapper(shadow::_shader, ambientLoc, &ambient, SHADER_UNIFORM_VEC4);
 
 shadow::setAmbientIntensity = (a) ->

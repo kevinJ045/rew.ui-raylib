@@ -11,6 +11,7 @@ in vec4 vertexColor;
 uniform mat4 mvp;
 uniform mat4 matModel;
 uniform mat4 matNormal;
+uniform mat4 lightVP;
 uniform vec3 lightPos;
 uniform vec4 difColor;
 
@@ -20,6 +21,7 @@ out vec2 fragTexCoord;
 out vec4 fragColor;
 out vec3 fragNormal;
 out mat3 TBN;
+out vec4 shadowPos;
 
 const float normalOffset = 0.1;
 
@@ -45,4 +47,5 @@ void main()
 
     // Calculate final vertex position
     gl_Position = mvp*vec4(vertexPosition, 1.0);
+    shadowPos = lightVP*vec4(fragPosition, 1.0);
 }
