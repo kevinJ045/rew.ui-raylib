@@ -48,6 +48,8 @@ function gui::window::init(title, flags, w = 800, h = 600) {
 
   InitWindow w, h, ^"#{title}\0"
 
+  R3D_Init w, h, 0
+
   return true;
 }
 

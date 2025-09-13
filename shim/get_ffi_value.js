@@ -1,4 +1,5 @@
 const fs = require("fs");
+const structs = require("./structs.js");
 
 module.exports = function getFfiFor(name, functions){
 
@@ -6,55 +7,6 @@ module.exports = function getFfiFor(name, functions){
     .filter(i => !!i.trim())
     .filter(i => !i.startsWith('//'))
     .map(i => i.replace(/\/\/(.+)/, ''));
-
-  const structs = [
-    "Vector2",
-    "Vector3",
-    "Vector4",
-    "Matrix",
-    // "Color",
-    "Rectangle",
-
-    "Image",
-    "Texture",
-    "RenderTexture",
-    "NPatchInfo",
-    "GlyphInfo",
-    "Font",
-
-    "Camera",
-    "Camera2D",
-    "Camera3D",
-
-    "Shader",
-    "MaterialMap",
-    "Material",
-    "Mesh",
-    "Model",
-    "ModelAnimation",
-    "Transform",
-    "BoneInfo",
-    "Ray",
-    "RayCollision",
-    "BoundingBox",
-
-    "Wave",
-    "AudioStream",
-    "Sound",
-    "Music",
-
-    "VrDeviceInfo",
-    "VrStereoConfig",
-
-    "FilePathList",
-
-    "AutomationEvent",
-    "AutomationEventList",
-
-    "Texture2D",
-    "RenderTexture2D",
-    "TextureCubemap",
-  ];
 
   function isStruct(type,name) {
     return name?.startsWith('*') ? false : structs.includes(type.replace(/\s*\*/g, "").trim());
@@ -74,6 +26,8 @@ module.exports = function getFfiFor(name, functions){
         return 'rew::ffi::i64'
       case "Color":
         return 'rew::ffi::i64'
+      case "R3D_LightType":
+        return 'rew::ffi::i32'
       default:
         return 'rew::ffi::buffer'
     };
@@ -82,12 +36,14 @@ module.exports = function getFfiFor(name, functions){
   function generateFuncMaps(decl) {
     decl = decl.trim().replace(/;$/, "");
 
-    const [returnType, rest] = decl.split(/\s+(.+)/);
+    let [returnType, rest] = decl.split(/\s+(.+)/);
+    if(!rest) return;
 
     const match = rest.match(/^(\w+)\((.*)\)$/);
     if (!match) return null;
 
-    const name = match[1];
+    let name = match[1];
+    if(name == "defined") return;
     const params = match[2].trim();
 
     let paramList = [];
@@ -107,7 +63,7 @@ module.exports = function getFfiFor(name, functions){
     }
 
     const wrapperParams = paramList.map(p => {
-      if (isStruct(p.type, p.name)) {
+      if (isStruct(p.type.replace(/^const /, ''), p.name)) {
         wrapper = true;
         return `rew::ffi::ptr`;
       }

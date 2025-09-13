@@ -17,6 +17,23 @@ const first = `#include "raylib.h"
 
 #include <stdlib.h>
 
+#include "./r3d/details/r3d_billboard.c"
+#include "./r3d/details/r3d_drawcall.c"
+#include "./r3d/details/r3d_frustum.c"
+#include "./r3d/details/r3d_light.c"
+#include "./r3d/details/r3d_primitives.c"
+#include "./r3d/r3d_core.c"
+#include "./r3d/r3d_culling.c"
+#include "./r3d/r3d_curves.c"
+#include "./r3d/r3d_environment.c"
+#include "./r3d/r3d_lighting.c"
+#include "./r3d/r3d_model.c"
+#include "./r3d/r3d_particles.c"
+#include "./r3d/r3d_skybox.c"
+#include "./r3d/r3d_sprite.c"
+#include "./r3d/r3d_state.c"
+#include "./r3d/r3d_utils.c"
+
 #include "texture_gen.c"
 `;
 

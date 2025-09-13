@@ -6,6 +6,7 @@ using namespace gui::raylib;
 using namespace gui::consts::;
 
 listener.on 'loop', (time) ->
+  return
 
   color = if listener._color is null or listener._color is undefined then 0xFFFFFFFF else listener._color 
   

@@ -1,4 +1,5 @@
 const fs = require("fs");
+const structs = require("./structs.js");
 
 module.exports = function makeWrappers(name){
   // process.argv[2]
@@ -10,55 +11,6 @@ module.exports = function makeWrappers(name){
     .filter(i => !i.startsWith('//'))
     .map(i => i.replace(/\/\/(.+)/, ''));
 
-  const structs = [
-    "Vector2",
-    "Vector3",
-    "Vector4",
-    "Matrix",
-    // "Color",
-    "Rectangle",
-
-    "Image",
-    "Texture",
-    "RenderTexture",
-    "NPatchInfo",
-    "GlyphInfo",
-    "Font",
-
-    "Camera",
-    "Camera2D",
-    "Camera3D",
-
-    "Shader",
-    "MaterialMap",
-    "Material",
-    "Mesh",
-    "Model",
-    "ModelAnimation",
-    "Transform",
-    "BoneInfo",
-    "Ray",
-    "RayCollision",
-    "BoundingBox",
-
-    "Wave",
-    "AudioStream",
-    "Sound",
-    "Music",
-
-    "VrDeviceInfo",
-    "VrStereoConfig",
-
-    "FilePathList",
-
-    "AutomationEvent",
-    "AutomationEventList",
-
-    "Texture2D",
-    "RenderTexture2D",
-    "TextureCubemap",
-  ];
-
   function isStruct(type,name) {
     return name?.startsWith('*') || type?.endsWith('*') ? false : structs.includes(type.replace(/\s*\*/g, "").trim());
   }
@@ -69,6 +21,8 @@ module.exports = function makeWrappers(name){
     decl = decl.trim().replace(/;$/, "");
 
     const [returnType, rest] = decl.split(/\s+(.+)/);
+
+    if(!rest) return;
 
     const match = rest.match(/^(\w+)\((.*)\)$/);
     if (!match) return null;
@@ -105,6 +59,8 @@ module.exports = function makeWrappers(name){
     });
 
     if(do_this){
+      functions.push(name);
+    } else if (name.startsWith('R3D')) {
       functions.push(name);
     } else {
       return "";

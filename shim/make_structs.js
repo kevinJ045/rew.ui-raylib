@@ -17,7 +17,12 @@ typedef struct {
     int colorLoc;
     int intensityLoc;
 } LightPBR;
-  
+
+Matrix* GetMatrixIdentity(){
+  Matrix* v = malloc(sizeof(Matrix));
+  *v = MatrixIdentity();
+  return v;
+}
 
 Vector2* CreateVector2(float x, float y) {
   Vector2* v = malloc(sizeof(Vector2));

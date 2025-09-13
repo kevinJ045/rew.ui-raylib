@@ -62,7 +62,10 @@ raylib_funcs = instantiate class extends raylib_funcs_auto
   ffi_type(ffi::ptr, ffi::f32) TG_NormalFromHeight = -> ffi::ptr
   ffi_type(ffi::ptr, ffi::i32) TG_NormalFromHeight = -> ffi::ptr
   ffi_type(ffi::i32, ffi::ptr, ffi::ptr) CreateColorStopsFromArrays = -> ffi::ptr
-  
+
+  ffi_type(ffi::i32, ffi::i32, ffi::i32) R3D_Init = -> ffi::void
+  ffi_type() GetMatrixIdentity = -> ffi::ptr
+
 
 raylib = rew::ffi::open './.artifacts/librayshim.so', raylib_funcs
 

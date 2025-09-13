@@ -18,6 +18,8 @@ lights = []
 
 function init()
   shader = gui::shadow::_shader
+  unless shader
+    return
   #LoadShaderWrapper ^'assets/pbr.vs\0', ^'assets/pbr.fs\0'
 
   SetShaderLoc shader, SHADER_LOC_MAP_ALBEDO, ^"albedoMap\0"

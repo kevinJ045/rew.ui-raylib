@@ -10,6 +10,23 @@
 
 #include <stdlib.h>
 
+#include "./r3d/details/r3d_billboard.c"
+#include "./r3d/details/r3d_drawcall.c"
+#include "./r3d/details/r3d_frustum.c"
+#include "./r3d/details/r3d_light.c"
+#include "./r3d/details/r3d_primitives.c"
+#include "./r3d/r3d_core.c"
+#include "./r3d/r3d_culling.c"
+#include "./r3d/r3d_curves.c"
+#include "./r3d/r3d_environment.c"
+#include "./r3d/r3d_lighting.c"
+#include "./r3d/r3d_model.c"
+#include "./r3d/r3d_particles.c"
+#include "./r3d/r3d_skybox.c"
+#include "./r3d/r3d_sprite.c"
+#include "./r3d/r3d_state.c"
+#include "./r3d/r3d_utils.c"
+
 #include "texture_gen.c"
 
 
@@ -28,7 +45,12 @@ typedef struct {
     int colorLoc;
     int intensityLoc;
 } LightPBR;
-  
+
+Matrix* GetMatrixIdentity(){
+  Matrix* v = malloc(sizeof(Matrix));
+  *v = MatrixIdentity();
+  return v;
+}
 
 Vector2* CreateVector2(float x, float y) {
   Vector2* v = malloc(sizeof(Vector2));
@@ -396,6 +418,991 @@ void SetLightPBRPos(LightPBR *light, Vector3 *position){
   light->position = *position;
 }
 
+
+
+void R3D_InitWrapper(int resWidth, int resHeight, unsigned int flags) {
+	R3D_Init(resWidth, resHeight, flags);
+}
+
+void R3D_CloseWrapper() {
+	R3D_Close();
+}
+
+bool R3D_HasStateWrapper(unsigned int flag) {
+	return R3D_HasState(flag);
+}
+
+void R3D_SetStateWrapper(unsigned int flags) {
+	R3D_SetState(flags);
+}
+
+void R3D_ClearStateWrapper(unsigned int flags) {
+	R3D_ClearState(flags);
+}
+
+void R3D_GetResolutionWrapper(int* width, int* height) {
+	R3D_GetResolution(width, height);
+}
+
+void R3D_UpdateResolutionWrapper(int width, int height) {
+	R3D_UpdateResolution(width, height);
+}
+
+void R3D_SetSceneBoundsWrapper(BoundingBox* sceneBounds) {
+	R3D_SetSceneBounds(*sceneBounds);
+}
+
+void R3D_SetTextureFilterWrapper(TextureFilter filter) {
+	R3D_SetTextureFilter(filter);
+}
+
+R3D_Layer R3D_GetActiveLayersWrapper() {
+	return R3D_GetActiveLayers();
+}
+
+void R3D_SetActiveLayersWrapper(R3D_Layer layers) {
+	R3D_SetActiveLayers(layers);
+}
+
+void R3D_EnableLayersWrapper(R3D_Layer bitfield) {
+	R3D_EnableLayers(bitfield);
+}
+
+void R3D_DisableLayersWrapper(R3D_Layer bitfield) {
+	R3D_DisableLayers(bitfield);
+}
+
+void R3D_BeginWrapper(Camera3D* camera) {
+	R3D_Begin(*camera);
+}
+
+void R3D_BeginExWrapper(Camera3D* camera, const RenderTexture* target) {
+	R3D_BeginEx(*camera, target);
+}
+
+void R3D_EndWrapper() {
+	R3D_End();
+}
+
+void R3D_DrawMeshWrapper(const R3D_Mesh* mesh, const R3D_Material* material, Matrix* transform) {
+	R3D_DrawMesh(mesh, material, *transform);
+}
+
+void R3D_DrawMeshInstancedWrapper(const R3D_Mesh* mesh, const R3D_Material* material, const Matrix* instanceTransforms, int instanceCount) {
+	R3D_DrawMeshInstanced(mesh, material, instanceTransforms, instanceCount);
+}
+
+void R3D_DrawMeshInstancedExWrapper(const R3D_Mesh* mesh, const R3D_Material* material, const Matrix* instanceTransforms, const Color* instanceColors, int instanceCount) {
+	R3D_DrawMeshInstancedEx(mesh, material, instanceTransforms, instanceColors, instanceCount);
+}
+
+void R3D_DrawModelWrapper(const R3D_Model* model, Vector3* position, float scale) {
+	R3D_DrawModel(model, *position, scale);
+}
+
+void R3D_DrawModelExWrapper(const R3D_Model* model, Vector3* position, Vector3* rotationAxis, float rotationAngle, Vector3* scale) {
+	R3D_DrawModelEx(model, *position, *rotationAxis, rotationAngle, *scale);
+}
+
+void R3D_DrawModelProWrapper(const R3D_Model* model, Matrix* transform) {
+	R3D_DrawModelPro(model, *transform);
+}
+
+void R3D_DrawModelInstancedWrapper(const R3D_Model* model, const Matrix* instanceTransforms, int instanceCount) {
+	R3D_DrawModelInstanced(model, instanceTransforms, instanceCount);
+}
+
+void R3D_DrawModelInstancedExWrapper(const R3D_Model* model, const Matrix* instanceTransforms, const Color* instanceColors, int instanceCount) {
+	R3D_DrawModelInstancedEx(model, instanceTransforms, instanceColors, instanceCount);
+}
+
+void R3D_DrawSpriteWrapper(const R3D_Sprite* sprite, Vector3* position) {
+	R3D_DrawSprite(sprite, *position);
+}
+
+void R3D_DrawSpriteExWrapper(const R3D_Sprite* sprite, Vector3* position, Vector2* size, float rotation) {
+	R3D_DrawSpriteEx(sprite, *position, *size, rotation);
+}
+
+void R3D_DrawSpriteProWrapper(const R3D_Sprite* sprite, Vector3* position, Vector2* size, Vector3* rotationAxis, float rotationAngle) {
+	R3D_DrawSpritePro(sprite, *position, *size, *rotationAxis, rotationAngle);
+}
+
+void R3D_DrawSpriteInstancedWrapper(const R3D_Sprite* sprite, const Matrix* instanceTransforms, int instanceCount) {
+	R3D_DrawSpriteInstanced(sprite, instanceTransforms, instanceCount);
+}
+
+void R3D_DrawSpriteInstancedExWrapper(const R3D_Sprite* sprite, const Matrix* instanceTransforms, const Color* instanceColors, int instanceCount) {
+	R3D_DrawSpriteInstancedEx(sprite, instanceTransforms, instanceColors, instanceCount);
+}
+
+void R3D_DrawParticleSystemWrapper(const R3D_ParticleSystem* system, const R3D_Mesh* mesh, const R3D_Material* material) {
+	R3D_DrawParticleSystem(system, mesh, material);
+}
+
+void R3D_DrawParticleSystemExWrapper(const R3D_ParticleSystem* system, const R3D_Mesh* mesh, const R3D_Material* material, Matrix* transform) {
+	R3D_DrawParticleSystemEx(system, mesh, material, *transform);
+}
+
+R3D_Mesh* R3D_GenMeshPolyWrapper(int sides, float radius, bool upload) {
+	R3D_Mesh* result = malloc(sizeof(R3D_Mesh));
+	*result = R3D_GenMeshPoly(sides, radius, upload);
+	return result;
+}
+
+R3D_Mesh* R3D_GenMeshPlaneWrapper(float width, float length, int resX, int resZ, bool upload) {
+	R3D_Mesh* result = malloc(sizeof(R3D_Mesh));
+	*result = R3D_GenMeshPlane(width, length, resX, resZ, upload);
+	return result;
+}
+
+R3D_Mesh* R3D_GenMeshCubeWrapper(float width, float height, float length, bool upload) {
+	R3D_Mesh* result = malloc(sizeof(R3D_Mesh));
+	*result = R3D_GenMeshCube(width, height, length, upload);
+	return result;
+}
+
+R3D_Mesh* R3D_GenMeshSphereWrapper(float radius, int rings, int slices, bool upload) {
+	R3D_Mesh* result = malloc(sizeof(R3D_Mesh));
+	*result = R3D_GenMeshSphere(radius, rings, slices, upload);
+	return result;
+}
+
+R3D_Mesh* R3D_GenMeshHemiSphereWrapper(float radius, int rings, int slices, bool upload) {
+	R3D_Mesh* result = malloc(sizeof(R3D_Mesh));
+	*result = R3D_GenMeshHemiSphere(radius, rings, slices, upload);
+	return result;
+}
+
+R3D_Mesh* R3D_GenMeshCylinderWrapper(float radius, float height, int slices, bool upload) {
+	R3D_Mesh* result = malloc(sizeof(R3D_Mesh));
+	*result = R3D_GenMeshCylinder(radius, height, slices, upload);
+	return result;
+}
+
+R3D_Mesh* R3D_GenMeshConeWrapper(float radius, float height, int slices, bool upload) {
+	R3D_Mesh* result = malloc(sizeof(R3D_Mesh));
+	*result = R3D_GenMeshCone(radius, height, slices, upload);
+	return result;
+}
+
+R3D_Mesh* R3D_GenMeshTorusWrapper(float radius, float size, int radSeg, int sides, bool upload) {
+	R3D_Mesh* result = malloc(sizeof(R3D_Mesh));
+	*result = R3D_GenMeshTorus(radius, size, radSeg, sides, upload);
+	return result;
+}
+
+R3D_Mesh* R3D_GenMeshKnotWrapper(float radius, float size, int radSeg, int sides, bool upload) {
+	R3D_Mesh* result = malloc(sizeof(R3D_Mesh));
+	*result = R3D_GenMeshKnot(radius, size, radSeg, sides, upload);
+	return result;
+}
+
+R3D_Mesh* R3D_GenMeshHeightmapWrapper(Image* heightmap, Vector3* size, bool upload) {
+	R3D_Mesh* result = malloc(sizeof(R3D_Mesh));
+	*result = R3D_GenMeshHeightmap(*heightmap, *size, upload);
+	return result;
+}
+
+R3D_Mesh* R3D_GenMeshCubicmapWrapper(Image* cubicmap, Vector3* cubeSize, bool upload) {
+	R3D_Mesh* result = malloc(sizeof(R3D_Mesh));
+	*result = R3D_GenMeshCubicmap(*cubicmap, *cubeSize, upload);
+	return result;
+}
+
+void R3D_UnloadMeshWrapper(const R3D_Mesh* mesh) {
+	R3D_UnloadMesh(mesh);
+}
+
+bool R3D_UploadMeshWrapper(R3D_Mesh* mesh, bool dynamic) {
+	return R3D_UploadMesh(mesh, dynamic);
+}
+
+bool R3D_UpdateMeshWrapper(R3D_Mesh* mesh) {
+	return R3D_UpdateMesh(mesh);
+}
+
+void R3D_UpdateMeshBoundingBoxWrapper(R3D_Mesh* mesh) {
+	R3D_UpdateMeshBoundingBox(mesh);
+}
+
+R3D_Material* R3D_GetDefaultMaterialWrapper() {
+	R3D_Material* result = malloc(sizeof(R3D_Material));
+	*result = R3D_GetDefaultMaterial();
+	return result;
+}
+
+void R3D_UnloadMaterialWrapper(const R3D_Material* material) {
+	R3D_UnloadMaterial(material);
+}
+
+R3D_Model* R3D_LoadModelWrapper(const char* filePath) {
+	R3D_Model* result = malloc(sizeof(R3D_Model));
+	*result = R3D_LoadModel(filePath);
+	return result;
+}
+
+R3D_Model* R3D_LoadModelFromMemoryWrapper(const char* fileType, const void* data, unsigned int size) {
+	R3D_Model* result = malloc(sizeof(R3D_Model));
+	*result = R3D_LoadModelFromMemory(fileType, data, size);
+	return result;
+}
+
+R3D_Model* R3D_LoadModelFromMeshWrapper(const R3D_Mesh* mesh) {
+	R3D_Model* result = malloc(sizeof(R3D_Model));
+	*result = R3D_LoadModelFromMesh(mesh);
+	return result;
+}
+
+void R3D_UnloadModelWrapper(const R3D_Model* model, bool unloadMaterials) {
+	R3D_UnloadModel(model, unloadMaterials);
+}
+
+void R3D_UpdateModelBoundingBoxWrapper(R3D_Model* model, bool updateMeshBoundingBoxes) {
+	R3D_UpdateModelBoundingBox(model, updateMeshBoundingBoxes);
+}
+
+R3D_ModelAnimation* R3D_LoadModelAnimationsWrapper(const char* fileName, int* animCount, int targetFrameRate) {
+	return R3D_LoadModelAnimations(fileName, animCount, targetFrameRate);
+}
+
+R3D_ModelAnimation* R3D_LoadModelAnimationsFromMemoryWrapper(const char* fileType, const void* data, unsigned int size, int* animCount, int targetFrameRate) {
+	return R3D_LoadModelAnimationsFromMemory(fileType, data, size, animCount, targetFrameRate);
+}
+
+void R3D_UnloadModelAnimationsWrapper(R3D_ModelAnimation* animations, int animCount) {
+	R3D_UnloadModelAnimations(animations, animCount);
+}
+
+R3D_ModelAnimation* R3D_GetModelAnimationWrapper(R3D_ModelAnimation* animations, int animCount, const char* name) {
+	return R3D_GetModelAnimation(animations, animCount, name);
+}
+
+void R3D_ListModelAnimationsWrapper(R3D_ModelAnimation* animations, int animCount) {
+	R3D_ListModelAnimations(animations, animCount);
+}
+
+void R3D_SetModelImportScaleWrapper(float value) {
+	R3D_SetModelImportScale(value);
+}
+
+R3D_Light* R3D_CreateLightWrapper(R3D_LightType type) {
+	R3D_Light* result = malloc(sizeof(R3D_Light));
+	*result = R3D_CreateLight(type);
+	return result;
+}
+
+void R3D_DestroyLightWrapper(R3D_Light* id) {
+	R3D_DestroyLight(*id);
+}
+
+bool R3D_IsLightExistWrapper(R3D_Light* id) {
+	return R3D_IsLightExist(*id);
+}
+
+R3D_LightType R3D_GetLightTypeWrapper(R3D_Light* id) {
+	return R3D_GetLightType(*id);
+}
+
+bool R3D_IsLightActiveWrapper(R3D_Light* id) {
+	return R3D_IsLightActive(*id);
+}
+
+void R3D_ToggleLightWrapper(R3D_Light* id) {
+	R3D_ToggleLight(*id);
+}
+
+void R3D_SetLightActiveWrapper(R3D_Light* id, bool active) {
+	R3D_SetLightActive(*id, active);
+}
+
+Color R3D_GetLightColorWrapper(R3D_Light* id) {
+	return R3D_GetLightColor(*id);
+}
+
+Vector3* R3D_GetLightColorVWrapper(R3D_Light* id) {
+	Vector3* result = malloc(sizeof(Vector3));
+	*result = R3D_GetLightColorV(*id);
+	return result;
+}
+
+void R3D_SetLightColorWrapper(R3D_Light* id, Color color) {
+	R3D_SetLightColor(*id, color);
+}
+
+void R3D_SetLightColorVWrapper(R3D_Light* id, Vector3* color) {
+	R3D_SetLightColorV(*id, *color);
+}
+
+Vector3* R3D_GetLightPositionWrapper(R3D_Light* id) {
+	Vector3* result = malloc(sizeof(Vector3));
+	*result = R3D_GetLightPosition(*id);
+	return result;
+}
+
+void R3D_SetLightPositionWrapper(R3D_Light* id, Vector3* position) {
+	R3D_SetLightPosition(*id, *position);
+}
+
+Vector3* R3D_GetLightDirectionWrapper(R3D_Light* id) {
+	Vector3* result = malloc(sizeof(Vector3));
+	*result = R3D_GetLightDirection(*id);
+	return result;
+}
+
+void R3D_SetLightDirectionWrapper(R3D_Light* id, Vector3* direction) {
+	R3D_SetLightDirection(*id, *direction);
+}
+
+void R3D_LightLookAtWrapper(R3D_Light* id, Vector3* position, Vector3* target) {
+	R3D_LightLookAt(*id, *position, *target);
+}
+
+float R3D_GetLightEnergyWrapper(R3D_Light* id) {
+	return R3D_GetLightEnergy(*id);
+}
+
+void R3D_SetLightEnergyWrapper(R3D_Light* id, float energy) {
+	R3D_SetLightEnergy(*id, energy);
+}
+
+float R3D_GetLightSpecularWrapper(R3D_Light* id) {
+	return R3D_GetLightSpecular(*id);
+}
+
+void R3D_SetLightSpecularWrapper(R3D_Light* id, float specular) {
+	R3D_SetLightSpecular(*id, specular);
+}
+
+float R3D_GetLightRangeWrapper(R3D_Light* id) {
+	return R3D_GetLightRange(*id);
+}
+
+void R3D_SetLightRangeWrapper(R3D_Light* id, float range) {
+	R3D_SetLightRange(*id, range);
+}
+
+float R3D_GetLightAttenuationWrapper(R3D_Light* id) {
+	return R3D_GetLightAttenuation(*id);
+}
+
+void R3D_SetLightAttenuationWrapper(R3D_Light* id, float attenuation) {
+	R3D_SetLightAttenuation(*id, attenuation);
+}
+
+float R3D_GetLightInnerCutOffWrapper(R3D_Light* id) {
+	return R3D_GetLightInnerCutOff(*id);
+}
+
+void R3D_SetLightInnerCutOffWrapper(R3D_Light* id, float degrees) {
+	R3D_SetLightInnerCutOff(*id, degrees);
+}
+
+float R3D_GetLightOuterCutOffWrapper(R3D_Light* id) {
+	return R3D_GetLightOuterCutOff(*id);
+}
+
+void R3D_SetLightOuterCutOffWrapper(R3D_Light* id, float degrees) {
+	R3D_SetLightOuterCutOff(*id, degrees);
+}
+
+void R3D_EnableShadowWrapper(R3D_Light* id, int resolution) {
+	R3D_EnableShadow(*id, resolution);
+}
+
+void R3D_DisableShadowWrapper(R3D_Light* id, bool destroyMap) {
+	R3D_DisableShadow(*id, destroyMap);
+}
+
+bool R3D_IsShadowEnabledWrapper(R3D_Light* id) {
+	return R3D_IsShadowEnabled(*id);
+}
+
+bool R3D_HasShadowMapWrapper(R3D_Light* id) {
+	return R3D_HasShadowMap(*id);
+}
+
+R3D_ShadowUpdateMode R3D_GetShadowUpdateModeWrapper(R3D_Light* id) {
+	return R3D_GetShadowUpdateMode(*id);
+}
+
+void R3D_SetShadowUpdateModeWrapper(R3D_Light* id, R3D_ShadowUpdateMode mode) {
+	R3D_SetShadowUpdateMode(*id, mode);
+}
+
+int R3D_GetShadowUpdateFrequencyWrapper(R3D_Light* id) {
+	return R3D_GetShadowUpdateFrequency(*id);
+}
+
+void R3D_SetShadowUpdateFrequencyWrapper(R3D_Light* id, int msec) {
+	R3D_SetShadowUpdateFrequency(*id, msec);
+}
+
+void R3D_UpdateShadowMapWrapper(R3D_Light* id) {
+	R3D_UpdateShadowMap(*id);
+}
+
+float R3D_GetShadowSoftnessWrapper(R3D_Light* id) {
+	return R3D_GetShadowSoftness(*id);
+}
+
+void R3D_SetShadowSoftnessWrapper(R3D_Light* id, float softness) {
+	R3D_SetShadowSoftness(*id, softness);
+}
+
+float R3D_GetShadowDepthBiasWrapper(R3D_Light* id) {
+	return R3D_GetShadowDepthBias(*id);
+}
+
+void R3D_SetShadowDepthBiasWrapper(R3D_Light* id, float value) {
+	R3D_SetShadowDepthBias(*id, value);
+}
+
+float R3D_GetShadowSlopeBiasWrapper(R3D_Light* id) {
+	return R3D_GetShadowSlopeBias(*id);
+}
+
+void R3D_SetShadowSlopeBiasWrapper(R3D_Light* id, float value) {
+	R3D_SetShadowSlopeBias(*id, value);
+}
+
+BoundingBox* R3D_GetLightBoundingBoxWrapper(R3D_Light* light) {
+	BoundingBox* result = malloc(sizeof(BoundingBox));
+	*result = R3D_GetLightBoundingBox(*light);
+	return result;
+}
+
+void R3D_DrawLightShapeWrapper(R3D_Light* id) {
+	R3D_DrawLightShape(*id);
+}
+
+R3D_ParticleSystem* R3D_LoadParticleSystemWrapper(int maxParticles) {
+	R3D_ParticleSystem* result = malloc(sizeof(R3D_ParticleSystem));
+	*result = R3D_LoadParticleSystem(maxParticles);
+	return result;
+}
+
+void R3D_UnloadParticleSystemWrapper(R3D_ParticleSystem* system) {
+	R3D_UnloadParticleSystem(system);
+}
+
+bool R3D_EmitParticleWrapper(R3D_ParticleSystem* system) {
+	return R3D_EmitParticle(system);
+}
+
+void R3D_UpdateParticleSystemWrapper(R3D_ParticleSystem* system, float deltaTime) {
+	R3D_UpdateParticleSystem(system, deltaTime);
+}
+
+void R3D_CalculateParticleSystemBoundingBoxWrapper(R3D_ParticleSystem* system) {
+	R3D_CalculateParticleSystemBoundingBox(system);
+}
+
+R3D_Sprite* R3D_LoadSpriteWrapper(Texture2D* texture, int xFrameCount, int yFrameCount) {
+	R3D_Sprite* result = malloc(sizeof(R3D_Sprite));
+	*result = R3D_LoadSprite(*texture, xFrameCount, yFrameCount);
+	return result;
+}
+
+void R3D_UnloadSpriteWrapper(const R3D_Sprite* sprite) {
+	R3D_UnloadSprite(sprite);
+}
+
+void R3D_UpdateSpriteWrapper(R3D_Sprite* sprite, float speed) {
+	R3D_UpdateSprite(sprite, speed);
+}
+
+void R3D_UpdateSpriteExWrapper(R3D_Sprite* sprite, int firstFrame, int lastFrame, float speed) {
+	R3D_UpdateSpriteEx(sprite, firstFrame, lastFrame, speed);
+}
+
+R3D_InterpolationCurve* R3D_LoadInterpolationCurveWrapper(int capacity) {
+	R3D_InterpolationCurve* result = malloc(sizeof(R3D_InterpolationCurve));
+	*result = R3D_LoadInterpolationCurve(capacity);
+	return result;
+}
+
+void R3D_UnloadInterpolationCurveWrapper(R3D_InterpolationCurve* curve) {
+	R3D_UnloadInterpolationCurve(*curve);
+}
+
+bool R3D_AddKeyframeWrapper(R3D_InterpolationCurve* curve, float time, float value) {
+	return R3D_AddKeyframe(curve, time, value);
+}
+
+float R3D_EvaluateCurveWrapper(R3D_InterpolationCurve* curve, float time) {
+	return R3D_EvaluateCurve(*curve, time);
+}
+
+void R3D_SetBackgroundColorWrapper(Color color) {
+	R3D_SetBackgroundColor(color);
+}
+
+void R3D_SetAmbientColorWrapper(Color color) {
+	R3D_SetAmbientColor(color);
+}
+
+void R3D_EnableSkyboxWrapper(R3D_Skybox* skybox) {
+	R3D_EnableSkybox(*skybox);
+}
+
+void R3D_DisableSkyboxWrapper() {
+	R3D_DisableSkybox();
+}
+
+void R3D_SetSkyboxRotationWrapper(float pitch, float yaw, float roll) {
+	R3D_SetSkyboxRotation(pitch, yaw, roll);
+}
+
+Vector3* R3D_GetSkyboxRotationWrapper() {
+	Vector3* result = malloc(sizeof(Vector3));
+	*result = R3D_GetSkyboxRotation();
+	return result;
+}
+
+void R3D_SetSkyboxIntensityWrapper(float background, float ambient, float reflection) {
+	R3D_SetSkyboxIntensity(background, ambient, reflection);
+}
+
+void R3D_GetSkyboxIntensityWrapper(float* background, float* ambient, float* reflection) {
+	R3D_GetSkyboxIntensity(background, ambient, reflection);
+}
+
+void R3D_SetSSAOWrapper(bool enabled) {
+	R3D_SetSSAO(enabled);
+}
+
+bool R3D_GetSSAOWrapper() {
+	return R3D_GetSSAO();
+}
+
+void R3D_SetSSAORadiusWrapper(float value) {
+	R3D_SetSSAORadius(value);
+}
+
+float R3D_GetSSAORadiusWrapper() {
+	return R3D_GetSSAORadius();
+}
+
+void R3D_SetSSAOBiasWrapper(float value) {
+	R3D_SetSSAOBias(value);
+}
+
+float R3D_GetSSAOBiasWrapper() {
+	return R3D_GetSSAOBias();
+}
+
+void R3D_SetSSAOIterationsWrapper(int value) {
+	R3D_SetSSAOIterations(value);
+}
+
+int R3D_GetSSAOIterationsWrapper() {
+	return R3D_GetSSAOIterations();
+}
+
+void R3D_SetSSAOIntensityWrapper(float value) {
+	R3D_SetSSAOIntensity(value);
+}
+
+float R3D_GetSSAOIntensityWrapper() {
+	return R3D_GetSSAOIntensity();
+}
+
+void R3D_SetSSAOPowerWrapper(float value) {
+	R3D_SetSSAOPower(value);
+}
+
+float R3D_GetSSAOPowerWrapper() {
+	return R3D_GetSSAOPower();
+}
+
+void R3D_SetSSAOLightAffectWrapper(float value) {
+	R3D_SetSSAOLightAffect(value);
+}
+
+float R3D_GetSSAOLightAffectWrapper() {
+	return R3D_GetSSAOLightAffect();
+}
+
+void R3D_SetBloomModeWrapper(R3D_Bloom mode) {
+	R3D_SetBloomMode(mode);
+}
+
+R3D_Bloom R3D_GetBloomModeWrapper() {
+	return R3D_GetBloomMode();
+}
+
+void R3D_SetBloomLevelsWrapper(int value) {
+	R3D_SetBloomLevels(value);
+}
+
+int R3D_GetBloomLevelsWrapper() {
+	return R3D_GetBloomLevels();
+}
+
+void R3D_SetBloomIntensityWrapper(float value) {
+	R3D_SetBloomIntensity(value);
+}
+
+float R3D_GetBloomIntensityWrapper() {
+	return R3D_GetBloomIntensity();
+}
+
+void R3D_SetBloomFilterRadiusWrapper(int value) {
+	R3D_SetBloomFilterRadius(value);
+}
+
+int R3D_GetBloomFilterRadiusWrapper() {
+	return R3D_GetBloomFilterRadius();
+}
+
+void R3D_SetBloomThresholdWrapper(float value) {
+	R3D_SetBloomThreshold(value);
+}
+
+float R3D_GetBloomThresholdWrapper() {
+	return R3D_GetBloomThreshold();
+}
+
+void R3D_SetBloomSoftThresholdWrapper(float value) {
+	R3D_SetBloomSoftThreshold(value);
+}
+
+float R3D_GetBloomSoftThresholdWrapper() {
+	return R3D_GetBloomSoftThreshold();
+}
+
+void R3D_SetSSRWrapper(bool enabled) {
+	R3D_SetSSR(enabled);
+}
+
+bool R3D_GetSSRWrapper() {
+	return R3D_GetSSR();
+}
+
+void R3D_SetSSRMaxRayStepsWrapper(int maxRaySteps) {
+	R3D_SetSSRMaxRaySteps(maxRaySteps);
+}
+
+int R3D_GetSSRMaxRayStepsWrapper() {
+	return R3D_GetSSRMaxRaySteps();
+}
+
+void R3D_SetSSRBinarySearchStepsWrapper(int binarySearchSteps) {
+	R3D_SetSSRBinarySearchSteps(binarySearchSteps);
+}
+
+int R3D_GetSSRBinarySearchStepsWrapper() {
+	return R3D_GetSSRBinarySearchSteps();
+}
+
+void R3D_SetSSRRayMarchLengthWrapper(float rayMarchLength) {
+	R3D_SetSSRRayMarchLength(rayMarchLength);
+}
+
+float R3D_GetSSRRayMarchLengthWrapper() {
+	return R3D_GetSSRRayMarchLength();
+}
+
+void R3D_SetSSRDepthThicknessWrapper(float depthThickness) {
+	R3D_SetSSRDepthThickness(depthThickness);
+}
+
+float R3D_GetSSRDepthThicknessWrapper() {
+	return R3D_GetSSRDepthThickness();
+}
+
+void R3D_SetSSRDepthToleranceWrapper(float depthTolerance) {
+	R3D_SetSSRDepthTolerance(depthTolerance);
+}
+
+float R3D_GetSSRDepthToleranceWrapper() {
+	return R3D_GetSSRDepthTolerance();
+}
+
+void R3D_SetSSRScreenEdgeFadeWrapper(float start, float end) {
+	R3D_SetSSRScreenEdgeFade(start, end);
+}
+
+void R3D_GetSSRScreenEdgeFadeWrapper(float* start, float* end) {
+	R3D_GetSSRScreenEdgeFade(start, end);
+}
+
+void R3D_SetFogModeWrapper(R3D_Fog mode) {
+	R3D_SetFogMode(mode);
+}
+
+R3D_Fog R3D_GetFogModeWrapper() {
+	return R3D_GetFogMode();
+}
+
+void R3D_SetFogColorWrapper(Color color) {
+	R3D_SetFogColor(color);
+}
+
+Color R3D_GetFogColorWrapper() {
+	return R3D_GetFogColor();
+}
+
+void R3D_SetFogStartWrapper(float value) {
+	R3D_SetFogStart(value);
+}
+
+float R3D_GetFogStartWrapper() {
+	return R3D_GetFogStart();
+}
+
+void R3D_SetFogEndWrapper(float value) {
+	R3D_SetFogEnd(value);
+}
+
+float R3D_GetFogEndWrapper() {
+	return R3D_GetFogEnd();
+}
+
+void R3D_SetFogDensityWrapper(float value) {
+	R3D_SetFogDensity(value);
+}
+
+float R3D_GetFogDensityWrapper() {
+	return R3D_GetFogDensity();
+}
+
+void R3D_SetFogSkyAffectWrapper(float value) {
+	R3D_SetFogSkyAffect(value);
+}
+
+float R3D_GetFogSkyAffectWrapper() {
+	return R3D_GetFogSkyAffect();
+}
+
+void R3D_SetDofModeWrapper(R3D_Dof mode) {
+	R3D_SetDofMode(mode);
+}
+
+R3D_Dof R3D_GetDofModeWrapper() {
+	return R3D_GetDofMode();
+}
+
+void R3D_SetDofFocusPointWrapper(float value) {
+	R3D_SetDofFocusPoint(value);
+}
+
+float R3D_GetDofFocusPointWrapper() {
+	return R3D_GetDofFocusPoint();
+}
+
+void R3D_SetDofFocusScaleWrapper(float value) {
+	R3D_SetDofFocusScale(value);
+}
+
+float R3D_GetDofFocusScaleWrapper() {
+	return R3D_GetDofFocusScale();
+}
+
+void R3D_SetDofMaxBlurSizeWrapper(float value) {
+	R3D_SetDofMaxBlurSize(value);
+}
+
+float R3D_GetDofMaxBlurSizeWrapper() {
+	return R3D_GetDofMaxBlurSize();
+}
+
+void R3D_SetDofDebugModeWrapper(bool enabled) {
+	R3D_SetDofDebugMode(enabled);
+}
+
+bool R3D_GetDofDebugModeWrapper() {
+	return R3D_GetDofDebugMode();
+}
+
+void R3D_SetTonemapModeWrapper(R3D_Tonemap mode) {
+	R3D_SetTonemapMode(mode);
+}
+
+R3D_Tonemap R3D_GetTonemapModeWrapper() {
+	return R3D_GetTonemapMode();
+}
+
+void R3D_SetTonemapExposureWrapper(float value) {
+	R3D_SetTonemapExposure(value);
+}
+
+float R3D_GetTonemapExposureWrapper() {
+	return R3D_GetTonemapExposure();
+}
+
+void R3D_SetTonemapWhiteWrapper(float value) {
+	R3D_SetTonemapWhite(value);
+}
+
+float R3D_GetTonemapWhiteWrapper() {
+	return R3D_GetTonemapWhite();
+}
+
+void R3D_SetBrightnessWrapper(float value) {
+	R3D_SetBrightness(value);
+}
+
+float R3D_GetBrightnessWrapper() {
+	return R3D_GetBrightness();
+}
+
+void R3D_SetContrastWrapper(float value) {
+	R3D_SetContrast(value);
+}
+
+float R3D_GetContrastWrapper() {
+	return R3D_GetContrast();
+}
+
+void R3D_SetSaturationWrapper(float value) {
+	R3D_SetSaturation(value);
+}
+
+float R3D_GetSaturationWrapper() {
+	return R3D_GetSaturation();
+}
+
+R3D_Skybox* R3D_LoadSkyboxWrapper(const char* fileName, CubemapLayout layout) {
+	R3D_Skybox* result = malloc(sizeof(R3D_Skybox));
+	*result = R3D_LoadSkybox(fileName, layout);
+	return result;
+}
+
+R3D_Skybox* R3D_LoadSkyboxFromMemoryWrapper(Image* image, CubemapLayout layout) {
+	R3D_Skybox* result = malloc(sizeof(R3D_Skybox));
+	*result = R3D_LoadSkyboxFromMemory(*image, layout);
+	return result;
+}
+
+R3D_Skybox* R3D_LoadSkyboxPanoramaWrapper(const char* fileName, int size) {
+	R3D_Skybox* result = malloc(sizeof(R3D_Skybox));
+	*result = R3D_LoadSkyboxPanorama(fileName, size);
+	return result;
+}
+
+R3D_Skybox* R3D_LoadSkyboxPanoramaFromMemoryWrapper(Image* image, int size) {
+	R3D_Skybox* result = malloc(sizeof(R3D_Skybox));
+	*result = R3D_LoadSkyboxPanoramaFromMemory(*image, size);
+	return result;
+}
+
+void R3D_UnloadSkyboxWrapper(R3D_Skybox* sky) {
+	R3D_UnloadSkybox(*sky);
+}
+
+bool R3D_IsPointInFrustumWrapper(Vector3* position) {
+	return R3D_IsPointInFrustum(*position);
+}
+
+bool R3D_IsSphereInFrustumWrapper(Vector3* position, float radius) {
+	return R3D_IsSphereInFrustum(*position, radius);
+}
+
+bool R3D_IsAABBInFrustumWrapper(BoundingBox* aabb) {
+	return R3D_IsAABBInFrustum(*aabb);
+}
+
+bool R3D_IsOBBInFrustumWrapper(BoundingBox* aabb, Matrix* transform) {
+	return R3D_IsOBBInFrustum(*aabb, *transform);
+}
+
+bool R3D_IsPointInFrustumBoundingBoxWrapper(Vector3* position) {
+	return R3D_IsPointInFrustumBoundingBox(*position);
+}
+
+bool R3D_IsSphereInFrustumBoundingBoxWrapper(Vector3* position, float radius) {
+	return R3D_IsSphereInFrustumBoundingBox(*position, radius);
+}
+
+bool R3D_IsAABBInFrustumBoundingBoxWrapper(BoundingBox* aabb) {
+	return R3D_IsAABBInFrustumBoundingBox(*aabb);
+}
+
+Texture2D* R3D_GetWhiteTextureWrapper() {
+	Texture2D* result = malloc(sizeof(Texture2D));
+	*result = R3D_GetWhiteTexture();
+	return result;
+}
+
+Texture2D* R3D_GetBlackTextureWrapper() {
+	Texture2D* result = malloc(sizeof(Texture2D));
+	*result = R3D_GetBlackTexture();
+	return result;
+}
+
+Texture2D* R3D_GetNormalTextureWrapper() {
+	Texture2D* result = malloc(sizeof(Texture2D));
+	*result = R3D_GetNormalTexture();
+	return result;
+}
+
+Texture2D* R3D_GetBufferColorWrapper() {
+	Texture2D* result = malloc(sizeof(Texture2D));
+	*result = R3D_GetBufferColor();
+	return result;
+}
+
+Texture2D* R3D_GetBufferNormalWrapper() {
+	Texture2D* result = malloc(sizeof(Texture2D));
+	*result = R3D_GetBufferNormal();
+	return result;
+}
+
+Texture2D* R3D_GetBufferDepthWrapper() {
+	Texture2D* result = malloc(sizeof(Texture2D));
+	*result = R3D_GetBufferDepth();
+	return result;
+}
+
+Matrix* R3D_GetMatrixViewWrapper() {
+	Matrix* result = malloc(sizeof(Matrix));
+	*result = R3D_GetMatrixView();
+	return result;
+}
+
+Matrix* R3D_GetMatrixInvViewWrapper() {
+	Matrix* result = malloc(sizeof(Matrix));
+	*result = R3D_GetMatrixInvView();
+	return result;
+}
+
+Matrix* R3D_GetMatrixProjectionWrapper() {
+	Matrix* result = malloc(sizeof(Matrix));
+	*result = R3D_GetMatrixProjection();
+	return result;
+}
+
+Matrix* R3D_GetMatrixInvProjectionWrapper() {
+	Matrix* result = malloc(sizeof(Matrix));
+	*result = R3D_GetMatrixInvProjection();
+	return result;
+}
+
+void R3D_DrawBufferAlbedoWrapper(float x, float y, float w, float h) {
+	R3D_DrawBufferAlbedo(x, y, w, h);
+}
+
+void R3D_DrawBufferEmissionWrapper(float x, float y, float w, float h) {
+	R3D_DrawBufferEmission(x, y, w, h);
+}
+
+void R3D_DrawBufferNormalWrapper(float x, float y, float w, float h) {
+	R3D_DrawBufferNormal(x, y, w, h);
+}
+
+void R3D_DrawBufferORMWrapper(float x, float y, float w, float h) {
+	R3D_DrawBufferORM(x, y, w, h);
+}
+
+void R3D_DrawBufferSSAOWrapper(float x, float y, float w, float h) {
+	R3D_DrawBufferSSAO(x, y, w, h);
+}
+
+void R3D_DrawBufferBloomWrapper(float x, float y, float w, float h) {
+	R3D_DrawBufferBloom(x, y, w, h);
+}
 
 
 Wave* LoadWaveWrapper(const char *fileName) {
