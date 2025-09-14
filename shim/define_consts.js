@@ -7,7 +7,8 @@ module.exports = function getDeclarations(name){
 
   const consts = {};
 
-  const matches = fstring.match(/typedef enum \{([^}]+)\}/gm)
+  const matches = fstring.match(/typedef enum (\w+ |)\{([^}]+)\}/gm)
+  matches.shift()
   matches.shift()
 
   if(matches){
@@ -18,6 +19,9 @@ module.exports = function getDeclarations(name){
         if(m){
           if(m[1]){
             current = parseInt(m[1]);
+            if(isNaN(current)){
+              current = 0;
+            }
           }
           consts[m[0].replace(/,$/, '')] = current;
           current += 1;

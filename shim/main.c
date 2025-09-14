@@ -355,6 +355,24 @@ Matrix* MatrixMultiplyW(Matrix *mat1, Matrix *mat2){
   return v;
 }
 
+Matrix* MatrixTranslateW(int x, int y, int z){
+  Matrix* v = malloc(sizeof(Matrix));
+  *v = MatrixTranslate(x, y, z);
+  return v;
+}
+
+Matrix* MatrixScaleW(int x, int y, int z){
+  Matrix* v = malloc(sizeof(Matrix));
+  *v = MatrixScale(x, y, z);
+  return v;
+}
+
+Matrix* MatrixRotateZYXW(Vector3 *vec){
+  Matrix* v = malloc(sizeof(Matrix));
+  *v = MatrixRotateZYX(*vec);
+  return v;
+}
+
 
 void DoStuffPls(Shader *shadowShader, RenderTexture2D *shadowMap, int shadowMapLoc){
   rlEnableShader(shadowShader->id);
@@ -416,6 +434,74 @@ LightPBR* CreateLightPBR(int maxl, int type, Vector3 *position, Vector3 *target,
 
 void SetLightPBRPos(LightPBR *light, Vector3 *position){
   light->position = *position;
+}
+
+
+R3D_Material* R3D_Model_GetMaterial(R3D_Model* model, int material_index) {
+    if (!model || material_index < 0 || material_index >= model->materialCount) {
+      model->materials[material_index] = R3D_GetDefaultMaterial();
+    }
+    return &model->materials[material_index];
+}
+
+void R3D_Material_SetAlbedoColor(R3D_Material* material, Color color) {
+    if (material) material->albedo.color = color;
+}
+
+void R3D_Material_SetAlbedoTexture(R3D_Material* material, Texture2D* texture) {
+    if (material) material->albedo.texture = *texture;
+}
+
+void R3D_Material_SetEmissionColor(R3D_Material* material, Color color) {
+    if (material) material->emission.color = color;
+}
+
+void R3D_Material_SetEmissionEnergy(R3D_Material* material, float energy) {
+    if (material) material->emission.energy = energy;
+}
+
+void R3D_Material_SetNormalTexture(R3D_Material* material, Texture2D* texture) {
+    if (material) material->normal.texture = *texture;
+}
+
+void R3D_Material_SetNormalScale(R3D_Material* material, float scale) {
+    if (material) material->normal.scale = scale;
+}
+
+void R3D_Material_SetORMTexture(R3D_Material* material, Texture2D* texture) {
+    if (material) material->orm.texture = *texture;
+}
+
+void R3D_Material_SetORMOcclusion(R3D_Material* material, float occlusion) {
+    if (material) material->orm.occlusion = occlusion;
+}
+
+void R3D_Material_SetORMRoughness(R3D_Material* material, float roughness) {
+    if (material) material->orm.roughness = roughness;
+}
+
+void R3D_Material_SetORMMetalness(R3D_Material* material, float metalness) {
+    if (material) material->orm.metalness = metalness;
+}
+
+void R3D_Material_SetBlendMode(R3D_Material* material, int blendMode) {
+    if (material) material->blendMode = (R3D_BlendMode)blendMode;
+}
+
+void R3D_Material_SetCullMode(R3D_Material* material, int cullMode) {
+    if (material) material->cullMode = (R3D_CullMode)cullMode;
+}
+
+void R3D_Material_SetUVOffset(R3D_Material* material, Vector2* offset) {
+    if (material) material->uvOffset = *offset;
+}
+
+void R3D_Material_SetUVScale(R3D_Material* material, Vector2* scale) {
+    if (material) material->uvScale = *scale;
+}
+
+void R3D_Material_SetAlphaCutoff(R3D_Material* material, float cutoff) {
+    if (material) material->alphaCutoff = cutoff;
 }
 
 

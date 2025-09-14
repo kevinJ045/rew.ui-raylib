@@ -101,6 +101,7 @@ gui::consts:: = {
   FLAG_INTERLACED_HINT    : 0x00010000,
   
   ...${getDeclarations('rcore')},
+  ...${getDeclarations('r3d')},
   ...${getDeclarations('rgui')}
 }
 `);

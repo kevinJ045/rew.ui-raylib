@@ -66,6 +66,28 @@ raylib_funcs = instantiate class extends raylib_funcs_auto
   ffi_type(ffi::i32, ffi::i32, ffi::i32) R3D_Init = -> ffi::void
   ffi_type() GetMatrixIdentity = -> ffi::ptr
 
+  ffi_type(ffi::f32, ffi::f32, ffi::f32) MatrixTranslateW = -> ffi::ptr
+  ffi_type(ffi::f32, ffi::f32, ffi::f32) MatrixScaleW = -> ffi::ptr
+  ffi_type(ffi::ptr) MatrixRotateZYXW = -> ffi::ptr
+
+  ffi_type(ffi::i32, ffi::i32) R3D_UpdateResolution = -> ffi::void
+  ffi_type(ffi::ptr, ffi::i32) R3D_Model_GetMaterial = -> ffi::ptr
+  ffi_type(ffi::ptr, ffi::i64) R3D_Material_SetAlbedoColor = -> ffi::void
+
+  ffi_type(ffi::ptr, ffi::f32) R3D_Material_SetORMOcclusion = -> ffi::void
+  ffi_type(ffi::ptr, ffi::f32) R3D_Material_SetORMRoughness = -> ffi::void
+  ffi_type(ffi::ptr, ffi::f32) R3D_Material_SetORMMetalness = -> ffi::void
+  
+  ffi_type(ffi::ptr, ffi::i32) R3D_Material_SetBlendMode = -> ffi::void
+  ffi_type(ffi::ptr, ffi::i32) R3D_Material_SetCullMode = -> ffi::void
+  ffi_type(ffi::ptr, ffi::ptr) R3D_Material_SetUVOffset = -> ffi::void
+  ffi_type(ffi::ptr, ffi::ptr) R3D_Material_SetUVScale = -> ffi::void
+  ffi_type(ffi::ptr, ffi::f32) R3D_Material_SetAlphaCutoff = -> ffi::void
+  
+  ffi_type(ffi::ptr, ffi::ptr) R3D_Material_SetAlbedoTexture = -> ffi::void
+  ffi_type(ffi::ptr, ffi::ptr) R3D_Material_SetNormalTexture = -> ffi::void
+  ffi_type(ffi::ptr, ffi::ptr) R3D_Material_SetORMTexture = -> ffi::void
+
 
 raylib = rew::ffi::open './.artifacts/librayshim.so', raylib_funcs
 

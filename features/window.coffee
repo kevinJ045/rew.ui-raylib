@@ -39,6 +39,7 @@ Object.defineProperty(gui::window::, 'campos', {
 listener.on 'resize', (w, h) ->
   width = w;
   height = h;
+  R3D_UpdateResolution w, h
 
 function gui::window::init(title, flags, w = 800, h = 600) {
   SetConfigFlags(flags) if flags

@@ -71,7 +71,6 @@
 
           # Raylib
           raylib
-          raygui
           assimp
           assimp.dev
         ];

@@ -12,8 +12,6 @@ gui::raylib = raylib;
 import "./features/loop.coffee";
 import "./features/window.coffee";
 import "./features/components/init.coffee";
-import "./features/shadow.coffee";
-import "./features/materials.coffee";
 import "./features/drawer.coffee";
 
 using namespace rew::ns
@@ -124,20 +122,35 @@ gui::window::camera_orbital = true
 #   textureTiling: CreateVector2(0.5, 0.5),
 # }
 
-# gui::window::add cube2, actualCube
+c = gui::components::Model::from '.artifacts/plane.glb'
 
-sp = R3D_GenMeshSphereWrapper 1.0, 16, 32, true
-mat = R3D_GetDefaultMaterialWrapper()
+c.mat {
+  albedoColor: 0xFFFFFFFF,
+  albedoTexture: LoadTextureWrapper(^".artifacts/road_a.png\0")
+  normalTexture: LoadTextureWrapper(^".artifacts/road_n.png\0")
+  ormTexture: LoadTextureWrapper(^".artifacts/road_mra.png\0")
+#   roughness: 0.0,
+#   metallic: 1.0,
+#   occlusion: 1.0,
+#   albedoMap: LoadTextureWrapper(^".artifacts/old_car_d.png\0"),
+#   metalMap: LoadTextureWrapper(^".artifacts/old_car_mra.png\0"),
+#   normalMap: LoadTextureWrapper(^".artifacts/old_car_n.png\0"),
+#   emissionMap: LoadTextureWrapper(^".artifacts/old_car_e.png\0"),
+}
+
+al = R3D_CreateLightWrapper 2
+R3D_SetLightActiveWrapper(al, true);
+R3D_SetLightPositionWrapper al, CreateVector3 0, 10, 0
+R3D_SetLightColorWrapper al, 0xFF00FF00
+R3D_SetLightEnergyWrapper al, 4.0
+
 light = R3D_CreateLightWrapper 0
 R3D_SetLightDirectionWrapper(light, CreateVector3(-1, -1, -1));
 R3D_SetLightActiveWrapper(light, true);
 
+gui::window::add c
+
 gui::events.on 'loop', (time) ->
-  BeginDrawing()
-  R3D_BeginWrapper(gui::window::camera);
-  R3D_DrawMeshWrapper(sp, mat, GetMatrixIdentity());
-  R3D_EndWrapper();
-  EndDrawing()
 
   # DrawTextureWrapper texNormal, 0, 0, 0xFFFFFFFF
   # cube.rot.x += 0.1
