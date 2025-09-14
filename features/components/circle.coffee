@@ -1,5 +1,5 @@
 import { Component } from "./base.coffee";
-import { CreateColor } from "../ffi/raylib.coffee"
+import { CreateVector2, CreateColor } from "../ffi/raylib.coffee"
 
 using namespace rew::ns;
 using namespace gui::raylib;
@@ -7,19 +7,20 @@ using namespace gui::raylib;
 defaults = {
   x: 0,
   y: 0,
-  text: "",
-  fontSize: 20,
+  radius: 50,
   color: { r: 255, g: 255, b: 255, a: 255 }
 };
 
 @{Component('2d'), defaults}
-function Text(
+function Circle(
   @props
 )
 
-function Text::draw(time, abs_pos)
+function Circle::draw(time, abs_pos)
+  center = CreateVector2 abs_pos.x, abs_pos.y
   color = CreateColor @props.color.r, @props.color.g, @props.color.b, @props.color.a
-  DrawText ^"#{@props.text}\0", abs_pos.x, abs_pos.y, @props.fontSize, color.ptr
+  DrawCircleVWrapper center.ptr, @props.radius, color.ptr
+  FreePTRVal center.ptr
   FreePTRVal color.ptr
 
-export { Text }
+export { Circle }

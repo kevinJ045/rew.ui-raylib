@@ -20,16 +20,16 @@ function Spinner(
   @props
 )
   # Create a buffer to hold the integer value.
-  valueBuf = rew::ffi::buffer(4)
-  valueBuf.writeInt32LE(@props.value, 0)
+  @valueBuf = rew::ffi::buffer(4)
+  @valueBuf.writeInt32LE(@props.value, 0)
 
-function Spinner::draw(time)
-  rect = CreateRectangle @props.x, @props.y, @props.w, @props.h
+function Spinner::draw(time, abs_pos)
+  rect = CreateRectangle abs_pos.x, abs_pos.y, @props.w, @props.h
   
   # The wrapper expects a pointer to an integer. We pass a buffer.
-  result = GuiSpinnerWrapper rect, ^"#{@props.text}\0", valueBuf, @props.minValue, @props.maxValue, @props.editMode
+  result = GuiSpinnerWrapper rect, ^"#{@props.text}\0", @valueBuf, @props.minValue, @props.maxValue, @props.editMode
   
-  newValue = valueBuf.readInt32LE(0)
+  newValue = @valueBuf.readInt32LE(0)
   if newValue != @props.value
     @props.value = newValue
     if @props.onChange

@@ -1,89 +1,187 @@
-import "#std.ffi!";
-import "#std.encoding!";
-import "#std.types!";
-import "#std.os!";
-using namespace rew::ns;
-using namespace Math;
-
-import raylib_funcs_auto from "./features/ffi/_values.coffee";
-
-raylib_funcs = instantiate class extends raylib_funcs_auto
-  ffi_type(ffi::f32, ffi::f32, ffi::f32) CreateVector3 = -> ffi::ptr
-  ffi_type(ffi::f32, ffi::f32, ffi::f32, ffi::f32) CreateRectangle = -> ffi::ptr
-  ffi_type(ffi::ptr, ffi::ptr, ffi::f32) CreateCamera3D = -> ffi::ptr
-
-  ffi_type(ffi::ptr, ffi::ptr) LoadModelAnimations = -> ffi::ptr
-  ffi_type(ffi::ptr, ffi::ptr, ffi::i32, ffi::i32) UpdateModelAnimationWrapper2 = -> ffi::ptr
-
-  ffi_type() rlPushMatrix = -> ffi::void
-  ffi_type() rlPopMatrix = -> ffi::void
-  ffi_type(ffi::f32, ffi::f32, ffi::f32) rlTranslatef = -> ffi::void
-  ffi_type(ffi::f32, ffi::f32, ffi::f32, ffi::f32) rlRotatef = -> ffi::void
-  ffi_type(ffi::f32, ffi::f32, ffi::f32) rlScalef = -> ffi::void
-
-raylib = rew::ffi::open './.artifacts/librayshim.so', raylib_funcs
-
-using namespace raylib;
-
-RAYWHITE = 0xFF000000
-RAYCOL = 0xFF00FF00
-RAYCOL2 = 0xFFFF0000
-
-SetConfigFlags 0x00000004
-InitWindow 800, 600, ^"hi\0"
-
-pos = CreateVector3 0, -1, 0
-campos = CreateVector3 5, 1, 5
-target = CreateVector3 0, 0, 0
-sv = CreateVector3 1, 1, 1
-up = CreateVector3 0, 1, 0
-cam = CreateCamera3D campos, target, 45.0
-
-glb = ^"/home/makano/workspace/svre3d/packages/i/bin/objects/cubixc7.glb\0"
-model = LoadModelWrapper glb
-animations = LoadModelAnimations(&glb, &8);
-
-r1 = 0
-r2 = 0
-r3 = 0
-frame = 0
-
-SetTargetFPS 120
-
-loop {
-  if WindowShouldClose()
-    break
-
-  BeginDrawing()
-  ClearBackground 0xFFFFFFFF
-  DrawRectangle 10, 30, 100, 30, RAYCOL2
-  DrawText ^"hiii\0", 30, 30, 30, RAYCOL
-  rect = CreateRectangle 10, 300, 100, 20
-  GuiButtonWrapper rect, ^"hiii\0"
-  BeginMode3DWrapper cam
 
 
-  # rect = GuiCreateRectangle 300, 200, 100, 30
+# gui::events::setOnStart ->
 
-  # print ptr::readStruct rect, { x: 'u32' }
-  # rlPushMatrix()
-  # rlTranslatef(0, 0, 0)
-  # rlRotatef(r1, 1, 0, 0)
-  # rlRotatef(r2, 0, 1, 0)
-  # rlRotatef(r3, 0, 0, 1)
-  # DrawCubeVWrapper pos, sv, RAYCOL
+#   rew::channel::timeout 1000, ->
+#     gui::loop::stop()
 
-  rot = CreateVector3 0, 1, 0
-  UpdateModelAnimationWrapper2 model, animations, 7, frame
-  DrawModelExWrapper model, pos, rot, r2, sv, 0xFFFFFFFF
-  # rlPopMatrix()
+# gui::window::init("Hello!", gui::consts::FLAG_MSAA_4X_HINT)
+# gui::window::background 0xFF000000
 
-  r2 += 0.1
+# gui::window::createCamera()
+# gui::window::camera_orbital = true
 
-  frame += 1
+# gui::shadow::setAmbientIntensity 1.0
+# gui::shadow::init()
+# gui::shadow::setAmbient [1.0, 1.0, 1.0, 0.1]
 
-  EndMode3D()
-  EndDrawing()
+
+# cube2 = gui::components::Model::from '.artifacts/plane.glb'
+# cube2.pos.y = -0.1
+# cube2.scale.x = 5
+# cube2.scale.y = 5
+# cube2.scale.z = 5
+
+# cube = gui::components::Model::from '.artifacts/old_car_new.glb'
+# cube.scale.x = 0.25
+# cube.scale.y = 0.25
+# cube.scale.z = 0.25
+
+# cube2.mat {
+#   albedo: 0xFFFFFFFF,
+#   roughness: 0.1,
+#   metallic: 0.8,
+#   occlusion: 1.0,
+#   emission: 0xFF000000,
+
+#   emissiveIntensity: 0.0,
+
+#   albedoMap: LoadTextureWrapper(^".artifacts/road_a.png\0"),
+#   metalMap: LoadTextureWrapper(^".artifacts/road_mra.png\0"),
+#   normalMap: LoadTextureWrapper(^".artifacts/road_n.png\0"),
+#   textureTiling: CreateVector2(0.5, 0.5)
+# }
+
+# cube.mat {
+#   albedo: 0xFFFFFFFF,
+#   roughness: 0.0,
+#   metallic: 1.0,
+#   occlusion: 1.0,
+#   emission: 0xFF000000,
+  
+#   emissiveIntensity: 0.0,
+
+#   albedoMap: LoadTextureWrapper(^".artifacts/old_car_d.png\0"),
+#   metalMap: LoadTextureWrapper(^".artifacts/old_car_mra.png\0"),
+#   normalMap: LoadTextureWrapper(^".artifacts/old_car_n.png\0"),
+#   emissionMap: LoadTextureWrapper(^".artifacts/old_car_e.png\0"),
+#   textureTiling: CreateVector2(0.5, 0.5)
+# }
+
+# gui::material::light 1, { x: -1.0, y: 1.0, z: -1.0 }, { x: 0, y: 0, z: 0 }, 0xFF00FFFF, 4.0
+# # gui::material::light 1, { x: 2.0, y: 1.0, z: 1.0 }, { x: 0, y: 0, z: 0 }, 0xFF00FF00, 3.3
+# gui::material::light 1, { x: -0.5, y: 0.5, z: 0.5 }, { x: 0, y: 0, z: 0 }, 0xFF3729E6, 8.3
+# # gui::material::light 1, { x: 1.0, y: 1.0, z: -1.0 }, { x: 0, y: 0, z: 0 }, 0xFFFF0000, 2.0
+
+# actualCube = gui::components::Model::cube 1, 1, 1
+
+# actualCube.pos.x = -2
+# actualCube.pos.y = 0.5
+# actualCube.pos.z = -3
+
+# fBase = TG_Voronoi 1024, 1024, 10, 300
+# t = new Float32Array([
+#   0.00, 1.00
+# ])
+# colors = new Uint8Array([
+#   255, 0, 0, 255,
+#   0, 255, 0, 255
+# ])
+# rockRamp = CreateColorStopsFromArrays 2, &t, &colors
+# texAlbedo = TG_AlbedoFromField ImageCopyWrapper(fBase), rockRamp, 2
+
+# fMetal = TG_Checker(1024,1024,16,16);
+# fRough = TG_Gradient(1024,1024,true);
+# fAO    = ImageCopyWrapper(fBase);
+# texMRA = TG_MRAFromFields(fMetal, fRough, fAO);
+
+# texNormal = TG_NormalFromHeight(ImageCopyWrapper(fBase), 4.0);
+
+# actualCube.mat {
+#   albedoColor: 0xFFFFFFFF,
+#   roughness: 0.1,
+#   metalness: 0.8,
+#   occlusion: 1.0,
+
+#   albedoTexture: texNormal,
+#   ormTexture: LoadTextureWrapper(^".artifacts/road_mra.png\0"),
+#   normalTexture: LoadTextureWrapper(^".artifacts/road_n.png\0")
+# }
+
+# c = gui::components::Model::from '.artifacts/plane.glb'
+# c.pos.y = -0.1
+# c.scale.x = 5
+# c.scale.y = 5
+# c.scale.z = 5
+
+# c.mat {
+#   albedoColor: 0xFFFFFFFF,
+#   albedoTexture: LoadTextureWrapper(^".artifacts/road_a.png\0")
+#   normalTexture: LoadTextureWrapper(^".artifacts/road_n.png\0")
+#   ormTexture: LoadTextureWrapper(^".artifacts/road_mra.png\0")
+#   roughness: 1.0,
+#   metalness: 1.0,
+#   occlusion: 1.0
+# }
+
+# gui::components::Light.omni()
+#   .move(2, 2, 2)
+#   .range(1000)
+#   .specular(1.0)
+#   .enable()
+
+# gui::components::Light.dir()
+#   .move(3, 3, 3)
+#   .range(1000)
+#   .direct(-1, -1, -1)
+#   .shadowOn(1024)
+#   .enable()
+
+# al = R3D_CreateLightWrapper 2
+# R3D_SetLightActiveWrapper(al, true);
+# R3D_SetLightPositionWrapper al, CreateVector3 0, 10, 0
+# R3D_SetLightColorWrapper al, 0xFF00FF00
+# R3D_SetLightEnergyWrapper al, 4.0
+
+# light = R3D_CreateLightWrapper 0
+# R3D_SetLightDirectionWrapper(light, CreateVector3(-1, -1, -1));
+# R3D_SetLightActiveWrapper(light, true);
+
+# gui::window::add c, actualCube
+
+# btn = gui::components::ListView::new {
+#   items: ([1..20].map .toString()),
+#   x: 100,
+#   y: 100,
+#   h: 400
+# }
+
+# btn.on 'change', (check) ->
+#   print 'uncheck' unless check
+#   print 'check' if check
+
+# btn.on 'scroll', (scrollIndex) ->
+#   print scrollIndex
+
+# p = gui::components::ProgressBar::new {
+#   textLeft: "Progging",
+
+#   x: 100,
+#   y: 100,
+# }
+
+# p = gui::components::TextBox::new {}
+# p.on 'change', print
+gui::window::add gui::components::Rect::new {
+  x: 200,
+  y: 50,
+  w: 200,
+  h: 400,
+  color: 0xFF00FFFF,
+  radius: 0.4,
+  padding: 10,
+  children: [
+    gui::components::Button::new {
+      text: 'shsh'
+    }
+  ]
 }
 
-CloseWindow()
+gui::events.on 'loop', (time) ->
+  # if p.props.value < 1.0
+  #   p.props.value += 0.005
+
+  # DrawTextureWrapper texNormal, 0, 0, 0xFFFFFFFF
+  # cube.rot.x += 0.1
+
+rew::channel::timeout 1, -> gui::loop::run(0, 1000 / 400)

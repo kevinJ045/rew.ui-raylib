@@ -16,11 +16,11 @@ defaults = {
 function TabBar(
   @props
 )
-  activeBuf = rew::ffi::buffer(4)
-  activeBuf.writeInt32LE(@props.active, 0)
+  @activeBuf = rew::ffi::buffer(4)
+  @activeBuf.writeInt32LE(@props.active, 0)
 
-function TabBar::draw(time)
-  rect = CreateRectangle @props.x, @props.y, @props.w, @props.h
+function TabBar::draw(time, abs_pos)
+  rect = CreateRectangle abs_pos.x, abs_pos.y, @props.w, @props.h
   
   # NOTE: GuiTabBar expects a `const char**` which is an array of strings.
   # The current FFI setup for this function is likely incorrect.
@@ -28,9 +28,9 @@ function TabBar::draw(time)
   # but this might not work as expected.
   tabs_text = @props.tabs.join(';')
   
-  GuiTabBarWrapper rect, ^"#{tabs_text}\0", @props.tabs.length, activeBuf
+  GuiTabBarWrapper rect, ^"#{tabs_text}\0", @props.tabs.length, @activeBuf
   
-  newActive = activeBuf.readInt32LE(0)
+  newActive = @activeBuf.readInt32LE(0)
   if newActive != @props.active
     @props.active = newActive
     if @props.onChange

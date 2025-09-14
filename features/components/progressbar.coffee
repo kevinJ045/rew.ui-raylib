@@ -20,8 +20,8 @@ function ProgressBar(
   @props
 )
 
-function ProgressBar::draw(time)
-  rect = CreateRectangle @props.x, @props.y, @props.w, @props.h
+function ProgressBar::draw(time, abs_pos)
+  rect = CreateRectangle abs_pos.x, abs_pos.y, @props.w, @props.h
   val = &(Math.max(Math.min(0.99999, @props.value), 0.00), 'f32')
   GuiProgressBarWrapper rect, ^"#{@props.textLeft}\0", ^"#{@props.textRight}\0", val, @props.min, @props.max
   FreePTRVal rect

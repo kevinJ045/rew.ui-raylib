@@ -16,8 +16,8 @@ function StatusBar(
   @props
 )
 
-function StatusBar::draw(time)
-  rect = CreateRectangle @props.x, @props.y, @props.w, @props.h
+function StatusBar::draw(time, abs_pos)
+  rect = CreateRectangle abs_pos.x, abs_pos.y, @props.w, @props.h
   GuiStatusBarWrapper rect, ^"#{@props.text}\0"
   FreePTRVal rect
 

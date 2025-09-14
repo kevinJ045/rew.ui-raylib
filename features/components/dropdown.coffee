@@ -19,8 +19,8 @@ function Dropdown(
 )
   @active = &(@props.active)
 
-function Dropdown::draw(time)
-  rect = CreateRectangle @props.x, @props.y, @props.w, @props.h
+function Dropdown::draw(time, abs_pos)
+  rect = CreateRectangle abs_pos.x, abs_pos.y, @props.w, @props.h
   text = @props.items.join(';')
   result = GuiDropdownBoxWrapper rect, ^"#{text}\0", @active, @props.editMode
   if result

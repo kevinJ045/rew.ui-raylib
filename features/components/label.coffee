@@ -16,8 +16,8 @@ function Label(
   @props
 )
 
-function Label::draw(time)
-  rect = CreateRectangle @props.x, @props.y, @props.w, @props.h
+function Label::draw(time, abs_pos)
+  rect = CreateRectangle abs_pos.x, abs_pos.y, @props.w, @props.h
   GuiLabelWrapper rect, ^"#{@props.text}\0"
   FreePTRVal rect
 

@@ -1,33 +1,65 @@
 import "#std.testing!";
-import ui from "./main.coffee";
-
-using namespace rew::ns;
-
-ui::init(ui::consts::INIT.VIDEO)
-
-win = ui::window::new("SDL Window", "resizable")
-
-renderer = win.createRenderer()
-
-renderer.loadFontForSizes('assets/DejaVuSansMono.ttf', 16, 24, 36)
-
-ui::loop::run ->
-  renderer.setRGB()
-  renderer.clear()
-
-  renderer.setRGB 255
-  renderer.fillRect(100, 100, 100, 100)
-
-  renderer.setFontSize 16
-  renderer.drawText 100, 200, "hello"
-
-  renderer.setFontSize 24
-  renderer.drawText 100, 300, "hello"
-
-  renderer.setFontSize 36
-  renderer.drawText 100, 400, "hello"
-
-  renderer.render()
 
 
+using (
+  import "./main.coffee!"
+)
 
+
+App("title") myApp = ->
+  Scene {
+    orbitCamera: true
+  }, [
+    Light {
+      direction: [-1, -1, -1],
+      shadow: true
+    }
+    Light {
+      type: 'omni'
+    }
+
+    Rect {
+      w: 100,
+      h: 100,
+      x: 100,
+      y: 100,
+      color: 0xFF00FF00
+    }
+
+    Model {
+      model: 'cube',
+      size: 1,
+      mat: {
+        albedoColor: 0xFF00FF00,
+        roughness: 1.0,
+        metalness: 1.0,
+        occlusion: 1.0
+      }
+    }
+
+    Model {
+      model: '.artifacts/plane.glb',
+      scale: {
+        x: 5,
+        y: 1,
+        z: 5
+      }
+      pos: {
+        x: 0,
+        y: -1,
+        z: 0,
+      }
+      mat: {
+        albedoColor: 0xFFFFFFFF,
+        albedoTexture: ".artifacts/road_a.png",
+        normalTexture: ".artifacts/road_n.png",
+        ormTexture: ".artifacts/road_mra.png",
+        roughness: 1.0,
+        metalness: 1.0,
+        occlusion: 1.0
+      }
+    }
+
+  ]
+
+startApp myApp

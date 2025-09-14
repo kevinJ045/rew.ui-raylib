@@ -16,8 +16,8 @@ function LabelButton(
   @props
 )
 
-function LabelButton::draw(time)
-  rect = CreateRectangle @props.x, @props.y, @props.w, @props.h
+function LabelButton::draw(time, abs_pos)
+  rect = CreateRectangle abs_pos.x, abs_pos.y, @props.w, @props.h
   result = GuiLabelButtonWrapper rect, ^"#{@props.text}\0"
   if result != 0
     if @props.onClick

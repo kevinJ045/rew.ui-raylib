@@ -20,17 +20,17 @@ function Slider(
   @props
 )
   # Create a buffer to hold the float value.
-  valueBuf = rew::ffi::buffer(4)
-  valueBuf.writeFloatLE(@props.value, 0)
+  @valueBuf = rew::ffi::buffer(4)
+  @valueBuf.writeFloatLE(@props.value, 0)
 
-function Slider::draw(time)
-  rect = CreateRectangle @props.x, @props.y, @props.w, @props.h
+function Slider::draw(time, abs_pos)
+  rect = CreateRectangle abs_pos.x, abs_pos.y, @props.w, @props.h
   
   # The wrapper expects a pointer to a float. We pass a buffer.
   # This might work if the FFI layer is smart enough to treat a buffer as a pointer.
-  result = GuiSliderWrapper rect, ^"#{@props.textLeft}\0", ^"#{@props.textRight}\0", valueBuf, @props.minValue, @props.maxValue
+  result = GuiSliderWrapper rect, ^"#{@props.textLeft}\0", ^"#{@props.textRight}\0", @valueBuf, @props.minValue, @props.maxValue
   
-  newValue = valueBuf.readFloatLE(0)
+  newValue = @valueBuf.readFloatLE(0)
   if newValue != @props.value
     @props.value = newValue
     if @props.onChange

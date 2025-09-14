@@ -1,4 +1,4 @@
-
+import { State } from "../state.coffee";
 using namespace rew::ns;
 
 function Component(type = '2d', extends_fn = null)
@@ -16,7 +16,21 @@ function Component(type = '2d', extends_fn = null)
           ...defaults,
           ...args[0]
         }
+
+      if typeof args[0] == "object"
+        for key, val in args[0]
+          if val instanceof State
+            Object.defineProperty args[0], key, {
+              get: -> val.value,
+              set: (v) -> val.set(v)
+            }
+      this.props = args[0]
       this.layer = args[0]?.layer || 1;
+      this.hidden = args[0]?.hidden or false;
+      this._children = []
+      if this.props.children
+        this.add(...this.props.children)
+        delete this.props.children
       basefn.call(this, ...args);
 
     fn.name = macro.parent(name)
@@ -36,6 +50,24 @@ function Component(type = '2d', extends_fn = null)
 
     fn::off = (...args) ->
       @emitter.off ...args
+
+    fn::_draw = (time, parent) ->
+      @abs_pos = { x: @props.x or @pos?.x or 0, y: @props.y or @pos?.y or 0, z: @props.z or @pos?.z or 0 }
+      
+      if parent
+        @abs_pos.x += parent.abs_pos.x
+        @abs_pos.y += parent.abs_pos.y
+        @abs_pos.z += parent.abs_pos.z
+        
+        if parent.props.padding and type == '2d'
+          @abs_pos.x += parent.props.padding?.x or parent.props.padding
+          @abs_pos.y += parent.props.padding?.y or parent.props.padding
+
+      @draw time, @abs_pos
+
+      @_children.forEach (child) =>
+        child._draw(time, @)
+
 
     _add = if fn::add then fn::add else ->
     fn::add = if _add.override then _add else (...children) ->

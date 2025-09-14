@@ -6,7 +6,7 @@ using namespace gui::consts::;
 
 @{Component('light')}
 function Light(
-  @type = R3D_LIGHT_DIR,
+  @ltype = R3D_LIGHT_DIR,
   @col = 0xFFFFFFFF
 )
   @pos = { x: 0, y: 0, z: 0 }
@@ -14,7 +14,7 @@ function Light(
   @pow = 1.0
   @active = false
   @shadow = false
-  @light = R3D_CreateLightWrapper @type
+  @light = R3D_CreateLightWrapper @ltype
   @ran = R3D_GetLightRangeWrapper @light
   @spec = R3D_GetLightSpecularWrapper @light
 

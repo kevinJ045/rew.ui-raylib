@@ -8,13 +8,35 @@ DEG2RAD = Math.PI / 180.0
 function getTex(t)
   if typeof t is "object" then t else LoadTextureWrapper ^"#{t}\0"
 
-@{Component('3d')}
+defaults = {
+  pos: { x: 0, y: 0, z: 0 },
+  rot: { x: 0, y: 0, z: 0 },
+  scale: { x: 1, y: 1, z: 1 },
+}
+
+defaultModels = {
+  'cube': (props) ->
+    R3D_LoadModelFromMeshWrapper R3D_GenMeshCubeWrapper props.size, props.size, props.size, true
+  'box': (props) ->
+    R3D_LoadModelFromMeshWrapper R3D_GenMeshCubeWrapper props.width, props.height, props.depth, true
+  'sphere': (props) ->
+    R3D_LoadModelFromMeshWrapper R3D_GenMeshSphereWrapper props.radius, props.rings, props.slices, true
+}
+
+getModel = (m, p) ->
+  if defaultModels[m]
+    defaultModels[m](p)
+  else
+    R3D_LoadModelWrapper ^"#{m}\0"
+
+@{Component('3d'), defaults}
 function Model(
-  @model
+  @props
 )
-  @pos = { x: 0, y: 0, z: 0 }
-  @rot = { x: 0, y: 0, z: 0 }
-  @scale = { x: 1, y: 1, z: 1 }
+  @model = @props.model
+  @pos = @props.pos
+  @rot = @props.rot
+  @scale = @props.scale
 
 function Model::mat(options, material_index = 0)
   material = R3D_Model_GetMaterial @model, material_index
@@ -65,10 +87,10 @@ function Model::mat(options, material_index = 0)
   if options.alphaCutoff != null
     R3D_Material_SetAlphaCutoff material, options.alphaCutoff
 
-function Model::draw(time, parent)
-  pos = gui::utils::vec3ptr @pos
-  rot = gui::utils::vec3ptr @rot
-  scale = gui::utils::vec3ptr @scale
+function Model::draw(time, abs_pos)
+  pos = CreateVector3 abs_pos.x, abs_pos.y, abs_pos.z
+  rot = CreateVector3 @rot.x, @rot.y, @rot.z
+  scale = CreateVector3 @scale.x, @scale.y, @scale.z
 
   R3D_DrawModelExWrapper @model, pos, rot, 0.0, scale
 
@@ -76,27 +98,18 @@ function Model::draw(time, parent)
   FreePTRVal rot
   FreePTRVal scale
 
-  # trans = MatrixTranslateW @pos.x, @pos.y, @pos.z
-  # rotMat = MatrixRotateZYXW CreateVector3(@rot.x * DEG2RAD, @rot.y * DEG2RAD, @rot.z * DEG2RAD)
-  # scaleMat = MatrixScaleW @scale.x, @scale.y, @scale.z
+function Model::from(model_path, props)
+  model = getModel(model_path, props)
+  Model::new {...props, model}
 
-  # transform = MatrixMultiplyW scaleMat, rotMat
-  # transform = MatrixMultiplyW transform, trans
-
-  # R3D_DrawModelProWrapper @model, transform
-
-function Model::from(model_path)
-  model = R3D_LoadModelWrapper ^"#{model_path}\0"
-  Model::new model
-
-function Model::cube(w, h, d)
+function Model::cube(w, h, d, props)
   cubeMesh = R3D_GenMeshCubeWrapper w, h, d, true
   model = R3D_LoadModelFromMeshWrapper cubeMesh
-  Model::new model
+  Model::new {...props, model}
 
-function Model::sphere(radius, rings, slices)
+function Model::sphere(radius, rings, slices, props)
   sphereMesh = R3D_GenMeshSphereWrapper radius, rings, slices, true
   model = R3D_LoadModelFromMeshWrapper sphereMesh
-  Model::new model
+  Model::new {...props, model}
 
 export { Model }

@@ -18,8 +18,8 @@ function CheckBox(
 )
   @checked = &(@props.checked)
 
-function CheckBox::draw(time)
-  rect = CreateRectangle @props.x, @props.y, @props.w, @props.h
+function CheckBox::draw(time, abs_pos)
+  rect = CreateRectangle abs_pos.x, abs_pos.y, @props.w, @props.h
   result = GuiCheckBoxWrapper rect, ^"#{@props.text}\0", @checked
   checked = *(@checked)
   if @props.checked != checked

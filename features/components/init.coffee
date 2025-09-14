@@ -20,7 +20,10 @@ package gui::components;
 # import { Light } from './light.coffee'
 # import { Rect } from './rect.coffee'
 # import { Text } from './text.coffee'
-
+# import { Circle } from './circle.coffee'
+# import { Line } from './line.coffee'
+# import { Grid } from './grid.coffee'
+# import { Group } from './group.coffee'
 
 
 gui::components:: = [
@@ -44,6 +47,10 @@ gui::components:: = [
   import './light.coffee'
   import './rect.coffee'
   import './text.coffee'
+  import './circle.coffee'
+  import './line.coffee'
+  import './grid.coffee'
+  import './group.coffee'
 ].reduce (acc, item) ->
   { ...acc, ...item }
 

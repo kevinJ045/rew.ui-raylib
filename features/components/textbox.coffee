@@ -19,8 +19,8 @@ function TextBox(
 )
   @text = &(^"#{@props.text}\0")
 
-function TextBox::draw(time)
-  rect = CreateRectangle @props.x, @props.y, @props.w, @props.h
+function TextBox::draw(time, abs_pos)
+  rect = CreateRectangle abs_pos.x, abs_pos.y, @props.w, @props.h
   
   result = GuiTextBoxWrapper rect, @text, @props.textSize, @props.editMode
   

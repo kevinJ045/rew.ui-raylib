@@ -90,6 +90,10 @@ raylib_funcs = instantiate class extends raylib_funcs_auto
   ffi_type(ffi::ptr, ffi::ptr) R3D_Material_SetNormalTexture = -> ffi::void
   ffi_type(ffi::ptr, ffi::ptr) R3D_Material_SetORMTexture = -> ffi::void
 
+  ffi_type() rlPushMatrixWrapper = -> rew::ffi::buffer
+  ffi_type() rlPopMatrixWrapper = -> rew::ffi::buffer
+  ffi_type(rew::ffi::f32, rew::ffi::f32, rew::ffi::f32) rlTranslatefWrapper = -> rew::ffi::buffer
+
 
 raylib = rew::ffi::open './.artifacts/librayshim.so', raylib_funcs
 raylib.free = raylib.FreePTRVal

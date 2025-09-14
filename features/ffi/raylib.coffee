@@ -1,7 +1,6 @@
 using compiler::coffeeClasses.enable;
 
 using namespace rew::ns
-using namespace gui::raylib
 
 class Texture2D
   constructor: (@ptr) ->
@@ -24,6 +23,12 @@ class Image
   unload: ->
     UnloadImageWrapper @ptr
 
+class Model
+  constructor: (@ptr) ->
+
+  unload: ->
+    UnloadModelWrapper @ptr
+
 LoadTexture = (path) ->
   ptr = LoadTextureWrapper(path)
   if ptr
@@ -42,6 +47,13 @@ LoadTextureFromImage = (image) ->
   ptr = LoadTextureFromImageWrapper(image.ptr)
   if ptr
     return new Texture2D(ptr)
+  else
+    return null
+
+LoadModel = (path) ->
+  ptr = LoadModelWrapper(path)
+  if ptr
+    return new Model(ptr)
   else
     return null
 
@@ -100,25 +112,23 @@ class Camera2D
 class Camera3D
   constructor: (@ptr) ->
 
-_CreateVector2 = CreateVector2
-_CreateVector3 = CreateVector3
-_CreateVector4 = CreateVector4
-_CreateColor = CreateColor
-_CreateRectangle = CreateRectangle
-_CreateCamera2D = CreateCamera2D
-_CreateCamera3D = CreateCamera3D
+_CreateVector2 = gui::raylib.CreateVector2
+_CreateVector3 = gui::raylib.CreateVector3
+_CreateVector4 = gui::raylib.CreateVector4
+_CreateRectangle = gui::raylib.CreateRectangle
+_CreateCamera2D = gui::raylib.CreateCamera2D
+_CreateCamera3D = gui::raylib.CreateCamera3D
 
 CreateVector2 = (x, y) -> new Vector2(_CreateVector2(x, y))
 CreateVector3 = (x, y, z) -> new Vector3(_CreateVector3(x, y, z))
 CreateVector4 = (x, y, z, w) -> new Vector4(_CreateVector4(x, y, z, w))
-CreateColor = (r, g, b, a) -> new Color(_CreateColor(r, g, b, a))
 CreateRectangle = (x, y, width, height) -> new Rectangle(_CreateRectangle(x, y, width, height))
 CreateCamera2D = (offset, target, rotation, zoom) -> new Camera2D(_CreateCamera2D(offset.ptr, target.ptr, rotation, zoom))
 CreateCamera3D = (position, target, fovy) -> new Camera3D(_CreateCamera3D(position.ptr, target.ptr, fovy))
 
 export {
-  Texture2D, LoadTexture, Image, LoadImage, LoadTextureFromImage,
+  Texture2D, LoadTexture, Image, LoadImage, LoadTextureFromImage, Model, LoadModel,
   Vector2, Vector3, Vector4, Color, Rectangle, Camera2D, Camera3D,
-  CreateVector2, CreateVector3, CreateVector4, CreateColor, CreateRectangle,
+  CreateVector2, CreateVector3, CreateVector4, CreateRectangle,
   CreateCamera2D, CreateCamera3D
 }

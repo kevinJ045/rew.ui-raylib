@@ -23,3 +23,6 @@ function utils::checkVec3(c, n, x, y, z)
 
 function utils::vec3ptr(thing)
   gui::raylib.CreateVector3 thing.x, thing.y, thing.z
+
+function utils::createCalcRect(child, parent)
+  gui::raylib.CreateRectangle @props.x, @props.y, @props.w, @props.h

@@ -20,12 +20,12 @@ function ListView(
   @scrollIndex = &(@props.scrollIndex)
   @active = &(@props.active)
 
-function ListView::draw(time)
-  rect = CreateRectangle @props.x, @props.y, @props.w, @props.h
+function ListView::draw(time, abs_pos)
+  rect = CreateRectangle abs_pos.x, abs_pos.y, @props.w, @props.h
   text = @props.items.join(';')
   result = GuiListViewWrapper rect, ^"#{text}\0", @scrollIndex, @active
-  active = *(@active)
-  scrollIndex = *(@scrollIndex)
+  active = *@active
+  scrollIndex = *@scrollIndex
   if active !== @props.active
     @props.active = active
     @emit 'change', active

@@ -3,28 +3,26 @@ import { Component } from "./base.coffee";
 using namespace rew::ns;
 using namespace gui::raylib;
 
-@{Component('2d')}
-function Rectangle(
-  @x, @y,
-  @w, @h,
-  @color
+defaults = {
+  x: 0,
+  y: 0,
+  w: 100,
+  h: 100,
+  color: 0xFFFFFFFF,
+  radius: 0,
+  segments: 0,
+  border: 0
+}
+
+@{Component('2d'), defaults}
+function Rect(
+  @props
 )
 
-function Rectangle::draw(time)
-  pos = CreateVector2 @x, @y
-  size = CreateVector2 @w, @h
-  DrawRectangleVWrapper pos, size, @color or 0xFFFF0000
-  FreePTRVal pos
-  FreePTRVal size
+function Rect::draw(time, abs_pos)
+  rect = CreateRectangle abs_pos.x, abs_pos.y, @props.w, @props.h
+  DrawRectangleRoundedWrapper rect, @props.radius, @props.segments, @props.color
+  DrawRectangleRoundedLinesExWrapper rect, @props.radius, @props.segments, @props.border, @props.color if @props.border
+  FreePTRVal rect
 
-function Rectangle::getRect()
-  if @_current_rec
-    return @_current_rec
-  @_current_rec = CreateRectangle @x, @y, @w, @h
-  @_current_rec
-
-function Rectangle::freeRect()
-  FreePTRVal @_current_rec
-  @_current_rec = null;
-
-export { Rectangle }
+export { Rect }

@@ -17,178 +17,113 @@ import "./features/drawer.coffee";
 using namespace rew::ns
 using namespace raylib
 
+#declare* "=state" = state; 
+#declare* "=App" = App; 
 
+GUI = Usage::create (ctx) ->
+  ctx.state = gui::state;
+  ctx.using(ctx.namespace(gui::consts::))
+  Object.keys(gui::components::).forEach (key) ->
+    ctx[key] = function(props, children)
+      if Array.isArray(props)
+        children = props
+        props = {}
+      
+      unless children
+        children = []
 
-# gui::events::setOnStart ->
-
-#   rew::channel::timeout 1000, ->
-#     gui::loop::stop()
-
-gui::window::init("Hello!", gui::consts::FLAG_MSAA_4X_HINT)
-gui::window::background 0xFF000000
-
-# gui::window::createCamera()
-# gui::window::camera_orbital = true
-
-# gui::shadow::setAmbientIntensity 1.0
-# gui::shadow::init()
-# gui::shadow::setAmbient [1.0, 1.0, 1.0, 0.1]
-
-
-# cube2 = gui::components::Model::from '.artifacts/plane.glb'
-# cube2.pos.y = -0.1
-# cube2.scale.x = 5
-# cube2.scale.y = 5
-# cube2.scale.z = 5
-
-# cube = gui::components::Model::from '.artifacts/old_car_new.glb'
-# cube.scale.x = 0.25
-# cube.scale.y = 0.25
-# cube.scale.z = 0.25
-
-# cube2.mat {
-#   albedo: 0xFFFFFFFF,
-#   roughness: 0.1,
-#   metallic: 0.8,
-#   occlusion: 1.0,
-#   emission: 0xFF000000,
-
-#   emissiveIntensity: 0.0,
-
-#   albedoMap: LoadTextureWrapper(^".artifacts/road_a.png\0"),
-#   metalMap: LoadTextureWrapper(^".artifacts/road_mra.png\0"),
-#   normalMap: LoadTextureWrapper(^".artifacts/road_n.png\0"),
-#   textureTiling: CreateVector2(0.5, 0.5)
-# }
-
-# cube.mat {
-#   albedo: 0xFFFFFFFF,
-#   roughness: 0.0,
-#   metallic: 1.0,
-#   occlusion: 1.0,
-#   emission: 0xFF000000,
+      gui::components::[key]::new {
+        ...props,
+        children
+      }
   
-#   emissiveIntensity: 0.0,
+  on3d = false
+  ctx.Scene = (props, items) ->
+    gui::window::createCamera()
 
-#   albedoMap: LoadTextureWrapper(^".artifacts/old_car_d.png\0"),
-#   metalMap: LoadTextureWrapper(^".artifacts/old_car_mra.png\0"),
-#   normalMap: LoadTextureWrapper(^".artifacts/old_car_n.png\0"),
-#   emissionMap: LoadTextureWrapper(^".artifacts/old_car_e.png\0"),
-#   textureTiling: CreateVector2(0.5, 0.5)
-# }
+    if Array.isArray(props)
+      items = props
+      props = {}
+    on3d = true
+    
+    if props.camerapos
+      gui::window::setCameraPosition ...props.camerapos
 
-# gui::material::light 1, { x: -1.0, y: 1.0, z: -1.0 }, { x: 0, y: 0, z: 0 }, 0xFF00FFFF, 4.0
-# # gui::material::light 1, { x: 2.0, y: 1.0, z: 1.0 }, { x: 0, y: 0, z: 0 }, 0xFF00FF00, 3.3
-# gui::material::light 1, { x: -0.5, y: 0.5, z: 0.5 }, { x: 0, y: 0, z: 0 }, 0xFF3729E6, 8.3
-# # gui::material::light 1, { x: 1.0, y: 1.0, z: -1.0 }, { x: 0, y: 0, z: 0 }, 0xFFFF0000, 2.0
+    if props.orbitCamera
+      gui::window::camera_orbital = true
 
-# actualCube = gui::components::Model::cube 1, 1, 1
+    items.filter (item) ->
+      item?._type !== 'light'
 
-# actualCube.pos.x = -2
-# actualCube.pos.y = 0.5
-# actualCube.pos.z = -3
+  ctx.Board = (items) ->
+    items
 
-# fBase = TG_Voronoi 1024, 1024, 10, 300
-# t = new Float32Array([
-#   0.00, 1.00
-# ])
-# colors = new Uint8Array([
-#   255, 0, 0, 255,
-#   0, 255, 0, 255
-# ])
-# rockRamp = CreateColorStopsFromArrays 2, &t, &colors
-# texAlbedo = TG_AlbedoFromField ImageCopyWrapper(fBase), rockRamp, 2
+  ctx.Model = (props, children) ->
+    m = gui::components::Model::from props.model, {
+      ...props,
+      children
+    }
+    if props.mat
+      m.mat props.mat
+    m
+  
+  ctx.Light = (props) ->
+    props = {
+      type: 'dir',
+      ...props
+    }
+    props.type = if props.type == 'dir'
+      then 0 else if props.type == 'spot'
+      then 1 else 2
+    l = gui::components::Light::new(props.type)
 
-# fMetal = TG_Checker(1024,1024,16,16);
-# fRough = TG_Gradient(1024,1024,true);
-# fAO    = ImageCopyWrapper(fBase);
-# texMRA = TG_MRAFromFields(fMetal, fRough, fAO);
+    if props.pos
+      l.move(...props.pos)
+    
+    if props.range
+      l.range(props.range)
 
-# texNormal = TG_NormalFromHeight(ImageCopyWrapper(fBase), 4.0);
+    if props.specular
+      l.specular(props.specular)
 
-# actualCube.mat {
-#   albedoColor: 0xFFFFFFFF,
-#   roughness: 0.1,
-#   metalness: 0.8,
-#   occlusion: 1.0,
+    if props.color
+      l.color(props.color)
+    
+    if props.direction
+      l.direct(...props.direction)
+    
+    if props.shadow
+      l.shadowOn(props.shadow == true ? 1024 : props.shadow)
+    
+    unless props.disable
+      l.enable()
 
-#   albedoTexture: texNormal,
-#   ormTexture: LoadTextureWrapper(^".artifacts/road_mra.png\0"),
-#   normalTexture: LoadTextureWrapper(^".artifacts/road_n.png\0")
-# }
+  ctx.bg = (col) ->
+    gui::window::background col
 
-# c = gui::components::Model::from '.artifacts/plane.glb'
-# c.pos.y = -0.1
-# c.scale.x = 5
-# c.scale.y = 5
-# c.scale.z = 5
+  ctx.startApp = (app, frames) ->
+    app()
+    rew::channel::timeout 1, -> gui::loop::run(0, frames || 1000 / 400)
 
-# c.mat {
-#   albedoColor: 0xFFFFFFFF,
-#   albedoTexture: LoadTextureWrapper(^".artifacts/road_a.png\0")
-#   normalTexture: LoadTextureWrapper(^".artifacts/road_n.png\0")
-#   ormTexture: LoadTextureWrapper(^".artifacts/road_mra.png\0")
-#   roughness: 1.0,
-#   metalness: 1.0,
-#   occlusion: 1.0
-# }
+  ctx.App = (title, flags, fn) ->
+    unless fn
+      fn = flags
+      flags = {}
+    
+    -> {
+      gui::window::init(title, flags.winmode or gui::consts::FLAG_WINDOW_RESIZABLE);
 
-# gui::components::Light.omni()
-#   .move(2, 2, 2)
-#   .range(1000)
-#   .specular(1.0)
-#   .enable()
+      if flags.3d or on3d
+        gui::window::createCamera()
 
-# gui::components::Light.dir()
-#   .move(3, 3, 3)
-#   .range(1000)
-#   .direct(-1, -1, -1)
-#   .shadowOn(1024)
-#   .enable()
+      if flags.orbit_camera
+        gui::window::camera_orbital = true
 
-# al = R3D_CreateLightWrapper 2
-# R3D_SetLightActiveWrapper(al, true);
-# R3D_SetLightPositionWrapper al, CreateVector3 0, 10, 0
-# R3D_SetLightColorWrapper al, 0xFF00FF00
-# R3D_SetLightEnergyWrapper al, 4.0
+      gui::window::add ...fn.call(gui::events)
+    }
 
-# light = R3D_CreateLightWrapper 0
-# R3D_SetLightDirectionWrapper(light, CreateVector3(-1, -1, -1));
-# R3D_SetLightActiveWrapper(light, true);
 
-# gui::window::add c, actualCube
 
-# btn = gui::components::ListView::new {
-#   items: ([1..20].map .toString()),
-#   x: 100,
-#   y: 100,
-#   h: 400
-# }
+GUI.gui = gui;
 
-# btn.on 'change', (check) ->
-#   print 'uncheck' unless check
-#   print 'check' if check
-
-# btn.on 'scroll', (scrollIndex) ->
-#   print scrollIndex
-
-# p = gui::components::ProgressBar::new {
-#   textLeft: "Progging",
-
-#   x: 100,
-#   y: 100,
-# }
-
-# p = gui::components::TextBox::new {}
-# p.on 'change', print
-
-# gui::window::add p
-
-gui::events.on 'loop', (time) ->
-  # if p.props.value < 1.0
-  #   p.props.value += 0.005
-
-  # DrawTextureWrapper texNormal, 0, 0, 0xFFFFFFFF
-  # cube.rot.x += 0.1
-
-rew::channel::timeout 1, -> gui::loop::run(0, 1000 / 400)
+module.exports = GUI;

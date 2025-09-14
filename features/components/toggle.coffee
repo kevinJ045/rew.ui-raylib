@@ -16,15 +16,15 @@ defaults = {
 function Toggle(
   @props
 )
-  activeBuf = rew::ffi::buffer(1)
-  activeBuf.writeInt8(@props.active, 0)
+  @activeBuf = rew::ffi::buffer(1)
+  @activeBuf.writeInt8(@props.active, 0)
 
-function Toggle::draw(time)
-  rect = CreateRectangle @props.x, @props.y, @props.w, @props.h
+function Toggle::draw(time, abs_pos)
+  rect = CreateRectangle abs_pos.x, abs_pos.y, @props.w, @props.h
   
-  result = GuiToggleWrapper rect, ^"#{@props.text}\0", activeBuf
+  result = GuiToggleWrapper rect, ^"#{@props.text}\0", @activeBuf
   
-  newActive = activeBuf.readInt8(0)
+  newActive = @activeBuf.readInt8(0)
   if newActive != @props.active
     @props.active = newActive
     if @props.onChange
