@@ -17,9 +17,7 @@ function Model(
   @scale = { x: 1, y: 1, z: 1 }
 
 function Model::mat(options, material_index = 0)
-  print 'Mat Gotten'
   material = R3D_Model_GetMaterial @model, material_index
-  print 'Mat Gotten'
   if not material
     print "[WARN]", "Material index #{material_index} is out of bounds."
     return
@@ -67,15 +65,25 @@ function Model::mat(options, material_index = 0)
   if options.alphaCutoff != null
     R3D_Material_SetAlphaCutoff material, options.alphaCutoff
 
-function Model::draw(time, shadow_instance)
-  trans = MatrixTranslateW @pos.x, @pos.y, @pos.z
-  rotMat = MatrixRotateZYXW CreateVector3(@rot.x * DEG2RAD, @rot.y * DEG2RAD, @rot.z * DEG2RAD)
-  scaleMat = MatrixScaleW @scale.x, @scale.y, @scale.z
+function Model::draw(time, parent)
+  pos = gui::utils::vec3ptr @pos
+  rot = gui::utils::vec3ptr @rot
+  scale = gui::utils::vec3ptr @scale
 
-  transform = MatrixMultiplyW scaleMat, rotMat
-  transform = MatrixMultiplyW transform, trans
+  R3D_DrawModelExWrapper @model, pos, rot, 0.0, scale
 
-  R3D_DrawModelProWrapper @model, GetMatrixIdentity()
+  FreePTRVal pos
+  FreePTRVal rot
+  FreePTRVal scale
+
+  # trans = MatrixTranslateW @pos.x, @pos.y, @pos.z
+  # rotMat = MatrixRotateZYXW CreateVector3(@rot.x * DEG2RAD, @rot.y * DEG2RAD, @rot.z * DEG2RAD)
+  # scaleMat = MatrixScaleW @scale.x, @scale.y, @scale.z
+
+  # transform = MatrixMultiplyW scaleMat, rotMat
+  # transform = MatrixMultiplyW transform, trans
+
+  # R3D_DrawModelProWrapper @model, transform
 
 function Model::from(model_path)
   model = R3D_LoadModelWrapper ^"#{model_path}\0"

@@ -12,7 +12,10 @@ module.exports = function getFfiFor(name, functions){
     return name?.startsWith('*') ? false : structs.includes(type.replace(/\s*\*/g, "").trim());
   }
 
-  function getType(type){
+  function getType(type, name){
+    if(name?.startsWith('*') && (type == 'bool' || type == 'int' || type == 'float')){
+      return 'rew::ffi::ptr';
+    }
     switch(type){
       case "int":
         return 'rew::ffi::i32'
@@ -67,7 +70,7 @@ module.exports = function getFfiFor(name, functions){
         wrapper = true;
         return `rew::ffi::ptr`;
       }
-      return getType(p.type);
+      return getType(p.type, p.name);
     });
 
     return `\tffi_type(${wrapperParams}) ${name}${functions.includes(name) ? 'Wrapper' : ''} = -> ${wrapperReturn}`;

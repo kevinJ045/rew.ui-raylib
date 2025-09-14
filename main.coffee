@@ -27,8 +27,8 @@ using namespace raylib
 gui::window::init("Hello!", gui::consts::FLAG_MSAA_4X_HINT)
 gui::window::background 0xFF000000
 
-gui::window::createCamera()
-gui::window::camera_orbital = true
+# gui::window::createCamera()
+# gui::window::camera_orbital = true
 
 # gui::shadow::setAmbientIntensity 1.0
 # gui::shadow::init()
@@ -84,9 +84,9 @@ gui::window::camera_orbital = true
 
 # actualCube = gui::components::Model::cube 1, 1, 1
 
-# # actualCube.pos.x = -2
+# actualCube.pos.x = -2
 # actualCube.pos.y = 0.5
-# # actualCube.pos.z = -3
+# actualCube.pos.z = -3
 
 # fBase = TG_Voronoi 1024, 1024, 10, 300
 # t = new Float32Array([
@@ -107,50 +107,86 @@ gui::window::camera_orbital = true
 # texNormal = TG_NormalFromHeight(ImageCopyWrapper(fBase), 4.0);
 
 # actualCube.mat {
-#   albedo: 0xFFFFFFFF,
+#   albedoColor: 0xFFFFFFFF,
 #   roughness: 0.1,
-#   metallic: 0.8,
+#   metalness: 0.8,
 #   occlusion: 1.0,
-#   emission: 0xFFFFFFFF,
 
-#   emissiveIntensity: 0.0,
-
-#   albedoMap: texNormal,
-#   metalMap: LoadTextureWrapper(^".artifacts/road_mra.png\0"),
-#   normalMap: LoadTextureWrapper(^".artifacts/road_n.png\0"),
-#   # emissionMap: texAlbedo,
-#   textureTiling: CreateVector2(0.5, 0.5),
+#   albedoTexture: texNormal,
+#   ormTexture: LoadTextureWrapper(^".artifacts/road_mra.png\0"),
+#   normalTexture: LoadTextureWrapper(^".artifacts/road_n.png\0")
 # }
 
-c = gui::components::Model::from '.artifacts/plane.glb'
+# c = gui::components::Model::from '.artifacts/plane.glb'
+# c.pos.y = -0.1
+# c.scale.x = 5
+# c.scale.y = 5
+# c.scale.z = 5
 
-c.mat {
-  albedoColor: 0xFFFFFFFF,
-  albedoTexture: LoadTextureWrapper(^".artifacts/road_a.png\0")
-  normalTexture: LoadTextureWrapper(^".artifacts/road_n.png\0")
-  ormTexture: LoadTextureWrapper(^".artifacts/road_mra.png\0")
-#   roughness: 0.0,
-#   metallic: 1.0,
-#   occlusion: 1.0,
-#   albedoMap: LoadTextureWrapper(^".artifacts/old_car_d.png\0"),
-#   metalMap: LoadTextureWrapper(^".artifacts/old_car_mra.png\0"),
-#   normalMap: LoadTextureWrapper(^".artifacts/old_car_n.png\0"),
-#   emissionMap: LoadTextureWrapper(^".artifacts/old_car_e.png\0"),
-}
+# c.mat {
+#   albedoColor: 0xFFFFFFFF,
+#   albedoTexture: LoadTextureWrapper(^".artifacts/road_a.png\0")
+#   normalTexture: LoadTextureWrapper(^".artifacts/road_n.png\0")
+#   ormTexture: LoadTextureWrapper(^".artifacts/road_mra.png\0")
+#   roughness: 1.0,
+#   metalness: 1.0,
+#   occlusion: 1.0
+# }
 
-al = R3D_CreateLightWrapper 2
-R3D_SetLightActiveWrapper(al, true);
-R3D_SetLightPositionWrapper al, CreateVector3 0, 10, 0
-R3D_SetLightColorWrapper al, 0xFF00FF00
-R3D_SetLightEnergyWrapper al, 4.0
+# gui::components::Light.omni()
+#   .move(2, 2, 2)
+#   .range(1000)
+#   .specular(1.0)
+#   .enable()
 
-light = R3D_CreateLightWrapper 0
-R3D_SetLightDirectionWrapper(light, CreateVector3(-1, -1, -1));
-R3D_SetLightActiveWrapper(light, true);
+# gui::components::Light.dir()
+#   .move(3, 3, 3)
+#   .range(1000)
+#   .direct(-1, -1, -1)
+#   .shadowOn(1024)
+#   .enable()
 
-gui::window::add c
+# al = R3D_CreateLightWrapper 2
+# R3D_SetLightActiveWrapper(al, true);
+# R3D_SetLightPositionWrapper al, CreateVector3 0, 10, 0
+# R3D_SetLightColorWrapper al, 0xFF00FF00
+# R3D_SetLightEnergyWrapper al, 4.0
+
+# light = R3D_CreateLightWrapper 0
+# R3D_SetLightDirectionWrapper(light, CreateVector3(-1, -1, -1));
+# R3D_SetLightActiveWrapper(light, true);
+
+# gui::window::add c, actualCube
+
+# btn = gui::components::ListView::new {
+#   items: ([1..20].map .toString()),
+#   x: 100,
+#   y: 100,
+#   h: 400
+# }
+
+# btn.on 'change', (check) ->
+#   print 'uncheck' unless check
+#   print 'check' if check
+
+# btn.on 'scroll', (scrollIndex) ->
+#   print scrollIndex
+
+# p = gui::components::ProgressBar::new {
+#   textLeft: "Progging",
+
+#   x: 100,
+#   y: 100,
+# }
+
+# p = gui::components::TextBox::new {}
+# p.on 'change', print
+
+# gui::window::add p
 
 gui::events.on 'loop', (time) ->
+  # if p.props.value < 1.0
+  #   p.props.value += 0.005
 
   # DrawTextureWrapper texNormal, 0, 0, 0xFFFFFFFF
   # cube.rot.x += 0.1

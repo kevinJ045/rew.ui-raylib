@@ -17,6 +17,8 @@ raylib_funcs = instantiate class extends raylib_funcs_auto
   ffi_type(ffi::ptr, ffi::ptr, ffi::ptr, ffi::f32) SetCamera3DVal = -> ffi::void
   ffi_type(ffi::ptr, ffi::ptr) SetCamera3DPos = -> ffi::void
 
+  ffi_type(ffi::ptr, ffi::ptr, ffi::u64, ffi::bool) GuiTextBoxWrapper = -> ffi::i32
+
   ffi_type(ffi::ptr) FreePTRVal = -> ffi::void
   
   ffi_type(ffi::ptr) GenMeshTangents = -> ffi::void
@@ -90,5 +92,6 @@ raylib_funcs = instantiate class extends raylib_funcs_auto
 
 
 raylib = rew::ffi::open './.artifacts/librayshim.so', raylib_funcs
+raylib.free = raylib.FreePTRVal
 
 module.exports = raylib
