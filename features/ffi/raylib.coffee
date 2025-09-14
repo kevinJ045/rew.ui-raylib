@@ -1,3 +1,5 @@
+using compiler::coffeeClasses.enable;
+
 using namespace rew::ns
 using namespace gui::raylib
 
