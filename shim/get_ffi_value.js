@@ -1,7 +1,7 @@
 const fs = require("fs");
 const structs = require("./structs.js");
 
-module.exports = function getFfiFor(name, functions){
+module.exports = function getFfiFor(name, functions, raylib){
 
   const declarations = fs.readFileSync(`raylib.h/${name}.h`, { encoding: 'utf-8' }).split('\n')
     .filter(i => !!i.trim())
@@ -72,6 +72,12 @@ module.exports = function getFfiFor(name, functions){
       }
       return getType(p.type, p.name);
     });
+
+    if(raylib){
+      if(functions.includes(name)){
+        return;
+      }
+    }
 
     return `\tffi_type(${wrapperParams}) ${name}${functions.includes(name) ? 'Wrapper' : ''} = -> ${wrapperReturn}`;
   }

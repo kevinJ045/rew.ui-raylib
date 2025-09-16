@@ -1,8 +1,11 @@
 
-import raylib_funcs_auto from "./_values.coffee";
+import {
+  func_map_1: rayshim_funcs_auto,
+  func_map_2: raylib_funcs_auto
+} from "./_values.coffee";
 using namespace rew::ns;
 
-raylib_funcs = instantiate class extends raylib_funcs_auto
+raylib_funcs = instantiate class extends rayshim_funcs_auto
   ffi_type(ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32) CreateMatrix = -> ffi::ptr
   ffi_type() CreateMatrixWrapper = -> ffi::ptr
 
@@ -90,22 +93,13 @@ raylib_funcs = instantiate class extends raylib_funcs_auto
   ffi_type(ffi::ptr, ffi::ptr) R3D_Material_SetNormalTexture = -> ffi::void
   ffi_type(ffi::ptr, ffi::ptr) R3D_Material_SetORMTexture = -> ffi::void
 
+raylib_name = rew::os::clamp("raylib.dll", "libraylib.so", "")
+rayshim_name = rew::os::clamp("./.artifacts/librayshim.dll", "./.artifacts/librayshim.so", "")
 
-raylib = if rew::os::slug is "windows"
-  raylib_symbols = Object.keys(raylib_funcs)
-    .filter (key) ->
-      !key.endsWith('Wrapper') and !key.startsWith('R3D')
-  rayshim_symbols = Object.keys(raylib_funcs)
-    .filter (key) ->
-      key.endsWith('Wrapper') or key.startsWith('R3D')
-  rayshim_funcs = Object.fromEntries rayshim_symbols.map (key) -> [key, raylib_funcs[key]]
-  raylib_funcs = Object.fromEntries raylib_symbols.map (key) -> [key, raylib_funcs[key]]
-  {
-    ...rew::ffi::open 'raylib.dll', raylib_funcs
-    ...rew::ffi::open './.artifacts/librayshim.dll', rayshim_funcs
-  }
-else
-  rew::ffi::open './.artifacts/librayshim.so', raylib_funcs
+raylib = {
+  ...rew::ffi::open raylib_name, raylib_funcs_auto
+  ...rew::ffi::open rayshim_name, raylib_funcs
+}
 
 raylib.free = raylib.FreePTRVal
 

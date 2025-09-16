@@ -20,6 +20,8 @@ const first = `#include "raylib.h"
 
 #include "r3d.h"
 #include "texture_gen.h"
+
+
 `;
 
 
@@ -30,9 +32,13 @@ const nodes = fs.readdirSync('raylib.h')
 const wrappers = nodes.map(i => i[0])
 const functions = nodes.map(i => i[1])
 
-const ffi_values = fs.readdirSync('raylib.h')
+const ffi_values_1 = fs.readdirSync('raylib.h')
   .filter(i => i.endsWith('.h') && i !== "structs.h")
-  .map(i => getFfiFor(i.replace(/\.h$/, ''), functions.flat()));
+  .map(i => getFfiFor(i.replace(/\.h$/, ''), functions.flat(), false));
+
+const ffi_values_2 = fs.readdirSync('raylib.h')
+  .filter(i => i.endsWith('.h') && i !== "structs.h")
+  .map(i => getFfiFor(i.replace(/\.h$/, ''), functions.flat(), true));
 
 const structs = makeStruct();
 
@@ -96,10 +102,14 @@ fs.writeFileSync('shim/main.c', first + '\n' + structs + '\n\n' + wrappers.join(
 
 
 fs.writeFileSync('features/ffi/_values.coffee', `
-func_map = class {
-${ffi_values.join('\n\n')}
+func_map_1 = class {
+${ffi_values_1.join('\n\n')}
 }
 
-module.exports = func_map
+func_map_2 = class {
+${ffi_values_2.join('\n\n')}
+}
+
+module.exports = {func_map_1, func_map_2}
 `);
 
