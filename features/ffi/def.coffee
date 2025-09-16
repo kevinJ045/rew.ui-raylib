@@ -91,7 +91,22 @@ raylib_funcs = instantiate class extends raylib_funcs_auto
   ffi_type(ffi::ptr, ffi::ptr) R3D_Material_SetORMTexture = -> ffi::void
 
 
-raylib = rew::ffi::open './.artifacts/librayshim.so', raylib_funcs
+raylib = if rew::os::slug is "windows"
+  raylib_symbols = Object.keys(raylib_funcs)
+    .filter (key) ->
+      !key.endsWith('Wrapper') and !key.startsWith('R3D')
+  rayshim_symbols = Object.keys(raylib_funcs)
+    .filter (key) ->
+      key.endsWith('Wrapper') or key.startsWith('R3D')
+  rayshim_funcs = Object.fromEntries rayshim_symbols.map (key) -> [key, raylib_funcs[key]]
+  raylib_funcs = Object.fromEntries raylib_symbols.map (key) -> [key, raylib_funcs[key]]
+  {
+    ...rew::ffi::open 'raylib.dll', raylib_funcs
+    ...rew::ffi::open './.artifacts/librayshim.dll', rayshim_funcs
+  }
+else
+  rew::ffi::open './.artifacts/librayshim.so', raylib_funcs
+
 raylib.free = raylib.FreePTRVal
 
 module.exports = raylib
