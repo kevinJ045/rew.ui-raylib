@@ -5,7 +5,19 @@ import {
 } from "./_values.coffee";
 using namespace rew::ns;
 
-raylib_funcs = instantiate class extends rayshim_funcs_auto
+raylib_funcs = instantiate class extends raylib_funcs_auto
+  ffi_type() rlPushMatrix = -> ffi::void
+  ffi_type() rlPopMatrix = -> ffi::void
+  ffi_type(ffi::f32, ffi::f32, ffi::f32) rlTranslatef = -> ffi::void
+  ffi_type(ffi::f32, ffi::f32, ffi::f32, ffi::f32) rlRotatef = -> ffi::void
+  ffi_type(ffi::f32, ffi::f32, ffi::f32) rlScalef = -> ffi::void
+  ffi_type(ffi::ptr, ffi::i32) UpdateCamera = -> rew::ffi::void
+
+  ffi_type(ffi::ptr) GenMeshTangents = -> ffi::void
+  ffi_type(ffi::ptr, ffi::ptr) LoadModelAnimations = -> ffi::ptr
+  ffi_type(ffi::ptr, ffi::ptr) SetMaterialShader = -> ffi::void
+
+rayshim_funcs = instantiate class extends rayshim_funcs_auto
   ffi_type(ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32) CreateMatrix = -> ffi::ptr
   ffi_type() CreateMatrixWrapper = -> ffi::ptr
 
@@ -24,7 +36,6 @@ raylib_funcs = instantiate class extends rayshim_funcs_auto
 
   ffi_type(ffi::ptr) FreePTRVal = -> ffi::void
   
-  ffi_type(ffi::ptr) GenMeshTangents = -> ffi::void
   ffi_type() GetMatrixModelviewWrapper = -> ffi::ptr
   ffi_type() GetMatrixProjectionWrapper = -> ffi::ptr
   ffi_type(ffi::ptr, ffi::ptr) MatrixMultiplyW = -> ffi::ptr
@@ -37,24 +48,15 @@ raylib_funcs = instantiate class extends rayshim_funcs_auto
   ffi_type(ffi::ptr) Vector3NormalizeW = -> ffi::ptr
   ffi_type(ffi::u64) ColorNormalizeW = -> ffi::ptr
 
-  ffi_type(ffi::ptr, ffi::i32) UpdateCamera = -> rew::ffi::void
   ffi_type(ffi::ptr, ffi::i32, ffi::ptr, ffi::i32) SetShaderValueWrapper = -> ffi::void
   ffi_type(ffi::ptr, ffi::ptr) GetLightViewProj = -> ffi::void
   ffi_type(ffi::ptr, ffi::u32, ffi::buffer) SetShaderLoc = -> ffi::void
 
-  ffi_type(ffi::ptr, ffi::ptr) LoadModelAnimations = -> ffi::ptr
-  ffi_type(ffi::ptr, ffi::ptr) SetMaterialShader = -> ffi::void
   ffi_type(ffi::ptr, ffi::ptr, ffi::i32, ffi::i32) UpdateModelAnimationWrapper2 = -> ffi::ptr
   ffi_type(ffi::ptr) GetCameraPosition = -> ffi::ptr
   ffi_type(ffi::ptr, ffi::ptr, ffi::u32) DoStuffPls = -> ffi::ptr
 
   ffi_type(ffi::ptr, ffi::u32, ffi::buffer, ffi::ptr) SetMaterialMapValue = -> ffi::ptr
-
-  ffi_type() rlPushMatrix = -> ffi::void
-  ffi_type() rlPopMatrix = -> ffi::void
-  ffi_type(ffi::f32, ffi::f32, ffi::f32) rlTranslatef = -> ffi::void
-  ffi_type(ffi::f32, ffi::f32, ffi::f32, ffi::f32) rlRotatef = -> ffi::void
-  ffi_type(ffi::f32, ffi::f32, ffi::f32) rlScalef = -> ffi::void
 
   ffi_type(ffi::ptr, ffi::u64, ffi::u64, ffi::u64, ffi::u64, ffi::u64) SetMaterialColors = -> ffi::void
   ffi_type(ffi::u32, ffi::u32) LoadShadowmapRenderTexture = -> ffi::ptr
@@ -97,8 +99,8 @@ raylib_name = rew::os::clamp("raylib.dll", "libraylib.so", "")
 rayshim_name = rew::os::clamp("./.artifacts/librayshim.dll", "./.artifacts/librayshim.so", "")
 
 raylib = {
-  ...rew::ffi::open raylib_name, raylib_funcs_auto
-  ...rew::ffi::open rayshim_name, raylib_funcs
+  ...rew::ffi::open raylib_name, raylib_funcs
+  ...rew::ffi::open rayshim_name, rayshim_funcs
 }
 
 raylib.free = raylib.FreePTRVal
