@@ -1,0 +1,3 @@
+/home/makano/workspace/rew.ui-raylib/shim/build/CMakeFiles/rayshim.dir
+/home/makano/workspace/rew.ui-raylib/shim/build/CMakeFiles/edit_cache.dir
+/home/makano/workspace/rew.ui-raylib/shim/build/CMakeFiles/rebuild_cache.dir

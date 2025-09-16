@@ -27,7 +27,7 @@
 #include <raylib.h>
 #include <raymath.h>
 #include <rlgl.h>
-#include "./glad.h"
+#include <glad.h>
 
 /* === Internal functions === */
 

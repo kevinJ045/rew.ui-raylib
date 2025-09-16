@@ -11,8 +11,8 @@
           # Core toolchain
           # gcc
           # git
-          # cmake
-          # gnumake
+          cmake
+          gnumake
 
           # Core graphics + rendering
           mesa

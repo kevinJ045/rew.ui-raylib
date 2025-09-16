@@ -1,1 +1,0 @@
-gcc -shared -o .artifacts/librayshim.so -fPIC shim/main.c -lraylib

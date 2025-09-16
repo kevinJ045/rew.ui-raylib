@@ -6,7 +6,7 @@
 
 #include <raylib.h>
 #include <raymath.h>
-#include "./glad.h"
+#include <glad.h>
 
 #include <assimp/postprocess.h>
 #include <assimp/material.h>

@@ -19,7 +19,7 @@
 
 #include "./r3d_primitives.h"
 #include <stddef.h>
-#include "../glad.h"
+#include <glad.h>
 
 r3d_primitive_t r3d_primitive_load_quad(void)
 {

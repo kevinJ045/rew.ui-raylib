@@ -1,0 +1,3 @@
+# Hashes of file build rules.
+77b6261050aa59c22ddfdab2cd672208 /home/makano/workspace/rew.ui-raylib/shim/main.c
+88a00c4e434d3d2d24e957256c1b911a generated/include/assets.h
