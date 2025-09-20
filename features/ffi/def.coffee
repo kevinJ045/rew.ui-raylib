@@ -11,15 +11,15 @@ raylib_funcs = instantiate class extends raylib_funcs_auto
   ffi_type(ffi::f32, ffi::f32, ffi::f32) rlTranslatef = -> ffi::void
   ffi_type(ffi::f32, ffi::f32, ffi::f32, ffi::f32) rlRotatef = -> ffi::void
   ffi_type(ffi::f32, ffi::f32, ffi::f32) rlScalef = -> ffi::void
-  ffi_type(ffi::ptr, ffi::i32) UpdateCamera = -> rew::ffi::void
 
   ffi_type(ffi::ptr) GenMeshTangents = -> ffi::void
-  ffi_type(ffi::ptr, ffi::ptr) LoadModelAnimations = -> ffi::ptr
-  ffi_type(ffi::ptr, ffi::ptr) SetMaterialShader = -> ffi::void
 
 rayshim_funcs = instantiate class extends rayshim_funcs_auto
   ffi_type(ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32, ffi::f32) CreateMatrix = -> ffi::ptr
   ffi_type() CreateMatrixWrapper = -> ffi::ptr
+
+  ffi_type(ffi::ptr, ffi::ptr) LoadModelAnimations = -> ffi::ptr
+  ffi_type(ffi::ptr, ffi::ptr) SetMaterialShader = -> ffi::void
 
   ffi_type(ffi::f32, ffi::f32) CreateVector2 = -> ffi::ptr
   ffi_type(ffi::f32, ffi::f32, ffi::f32) CreateVector3 = -> ffi::ptr
@@ -94,6 +94,7 @@ rayshim_funcs = instantiate class extends rayshim_funcs_auto
   ffi_type(ffi::ptr, ffi::ptr) R3D_Material_SetAlbedoTexture = -> ffi::void
   ffi_type(ffi::ptr, ffi::ptr) R3D_Material_SetNormalTexture = -> ffi::void
   ffi_type(ffi::ptr, ffi::ptr) R3D_Material_SetORMTexture = -> ffi::void
+  ffi_type(ffi::ptr, ffi::i32) UpdateCamera = -> rew::ffi::void
 
 raylib_name = rew::os::clamp("raylib.dll", "libraylib.so", "")
 rayshim_name = rew::os::clamp("./.artifacts/librayshim.dll", "./.artifacts/librayshim.so", "")

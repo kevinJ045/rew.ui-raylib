@@ -980,24 +980,6 @@ func_map_2 = class {
 	ffi_type() GetGesturePinchAngle = -> rew::ffi::f32
 	ffi_type(rew::ffi::buffer,rew::ffi::i32) UpdateCamera = -> rew::ffi::buffer
 
-	ffi_type() GuiEnable = -> rew::ffi::buffer
-	ffi_type() GuiDisable = -> rew::ffi::buffer
-	ffi_type() GuiLock = -> rew::ffi::buffer
-	ffi_type() GuiUnlock = -> rew::ffi::buffer
-	ffi_type() GuiIsLocked = -> rew::ffi::bool
-	ffi_type(rew::ffi::f32) GuiSetAlpha = -> rew::ffi::buffer
-	ffi_type(rew::ffi::i32) GuiSetState = -> rew::ffi::buffer
-	ffi_type() GuiGetState = -> rew::ffi::i32
-	ffi_type(rew::ffi::i32,rew::ffi::i32,rew::ffi::i32) GuiSetStyle = -> rew::ffi::buffer
-	ffi_type(rew::ffi::i32,rew::ffi::i32) GuiGetStyle = -> rew::ffi::i32
-	ffi_type(rew::ffi::buffer) GuiLoadStyle = -> rew::ffi::buffer
-	ffi_type() GuiLoadStyleDefault = -> rew::ffi::buffer
-	ffi_type() GuiEnableTooltip = -> rew::ffi::buffer
-	ffi_type() GuiDisableTooltip = -> rew::ffi::buffer
-	ffi_type(rew::ffi::buffer) GuiSetTooltip = -> rew::ffi::buffer
-	ffi_type(rew::ffi::i32) GuiSetIconScale = -> rew::ffi::buffer
-	ffi_type(rew::ffi::i32,rew::ffi::i32,rew::ffi::i32,rew::ffi::i32,rew::ffi::i64) GuiDrawIcon = -> rew::ffi::buffer
-
 	ffi_type(rew::ffi::buffer,rew::ffi::i32,rew::ffi::i64) DrawTriangleStrip3D = -> rew::ffi::buffer
 	ffi_type(rew::ffi::i32,rew::ffi::f32) DrawGrid = -> rew::ffi::buffer
 	ffi_type(rew::ffi::buffer,rew::ffi::bool) UploadMesh = -> rew::ffi::buffer
