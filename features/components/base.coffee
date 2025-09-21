@@ -1,4 +1,6 @@
 import { State } from "../state.coffee";
+import { calculateLayout } from "../layout.coffee";
+
 using namespace rew::ns;
 
 function Component(type = '2d', extends_fn = null)
@@ -52,18 +54,7 @@ function Component(type = '2d', extends_fn = null)
       @emitter.off ...args
 
     fn::_draw = (time, parent) ->
-      @abs_pos = { x: @props.x or @pos?.x or 0, y: @props.y or @pos?.y or 0, z: @props.z or @pos?.z or 0 }
-      
-      if parent
-        @abs_pos.x += parent.abs_pos.x
-        @abs_pos.y += parent.abs_pos.y
-        @abs_pos.z += parent.abs_pos.z
-        
-        if parent.props.padding and type == '2d'
-          @abs_pos.x += parent.props.padding?.x or parent.props.padding
-          @abs_pos.y += parent.props.padding?.y or parent.props.padding
-
-      @draw time, @abs_pos
+      @draw time
 
       @_children.forEach (child) =>
         child._draw(time, @)
@@ -74,6 +65,7 @@ function Component(type = '2d', extends_fn = null)
       this._children.push(...children)
       children.forEach (child) =>
         child.parent = this
+        # calculateLayout child, this
       _add(...children)
 
     _remove = if fn::remove then fn::remove else ->

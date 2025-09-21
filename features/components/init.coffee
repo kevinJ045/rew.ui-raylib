@@ -27,30 +27,10 @@ package gui::components;
 
 
 gui::components:: = [
-  import './button.coffee'
-  import './label.coffee'
-  import './checkbox.coffee'
-  import './dropdown.coffee'
-  import './groupbox.coffee'
-  import './labelbutton.coffee'
-  import './listview.coffee'
-  import './panel.coffee'
-  import './progressbar.coffee'
-  import './scrollpanel.coffee'
-  import './slider.coffee'
-  import './spinner.coffee'
-  import './statusbar.coffee'
-  import './tabbar.coffee'
-  import './textbox.coffee'
-  import './toggle.coffee'
-  import './model.coffee'
-  import './light.coffee'
   import './rect.coffee'
   import './text.coffee'
-  import './circle.coffee'
-  import './line.coffee'
-  import './grid.coffee'
-  import './group.coffee'
+  import './flex_rect.coffee'
+  import './flex_text.coffee'
 ].reduce (acc, item) ->
   { ...acc, ...item }
 

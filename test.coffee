@@ -5,14 +5,35 @@ using (
   import "./main.coffee!"
 )
 
+using namespace rew::io::out;
 
 App("title") myApp = ->
+  cubepos = {
+    x: 0,
+    y: 0,
+    z: 0
+  }
+  x = true
+
+  @on 'loop', (time) ->
+    if cubepos.z >= 1
+      x = false
+    
+    if cubepos.z <= -1
+      x = true
+
+    if x
+      cubepos.z += 1 * time
+    else
+      cubepos.z -= 1 * time
+
   Scene {
+    showFPS: true,
     orbitCamera: true
   }, [
     Light {
       direction: [-1, -1, -1],
-      shadow: true
+      shadow: 1024,
     }
     Light {
       type: 'omni'
@@ -29,6 +50,7 @@ App("title") myApp = ->
     Model {
       model: 'cube',
       size: 1,
+      pos: cubepos,
       mat: {
         albedoColor: 0xFF00FF00,
         roughness: 1.0,

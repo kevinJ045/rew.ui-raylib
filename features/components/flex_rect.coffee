@@ -15,15 +15,16 @@ defaults = {
 }
 
 @{Component('2d'), defaults}
-function Rect(
+function FlexRect(
   @props
 )
 
-function Rect::draw(time)
-  abs_pos = { @x, @y, @w, @h }
-  rect = CreateRectangle abs_pos.x, abs_pos.y, @props.w, @props.h
+function FlexRect::draw(time)
+  { color } = @props
+  { x, y, width, height } = @_layout or @props
+  rect = CreateRectangle x, y, width, height
   DrawRectangleRoundedWrapper rect, @props.radius, @props.segments, @props.color
   DrawRectangleRoundedLinesExWrapper rect, @props.radius, @props.segments, @props.border, @props.color if @props.border
   FreePTRVal rect
 
-export { Rect }
+export { FlexRect }

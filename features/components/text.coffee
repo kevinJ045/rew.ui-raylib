@@ -17,9 +17,9 @@ function Text(
   @props
 )
 
-function Text::draw(time, abs_pos)
+function Text::draw(time)
   color = CreateColor @props.color.r, @props.color.g, @props.color.b, @props.color.a
-  DrawText ^"#{@props.text}\0", abs_pos.x, abs_pos.y, @props.fontSize, color.ptr
+  DrawText ^"#{@props.text}\0", @x, @y, @props.fontSize, color.ptr
   FreePTRVal color.ptr
 
 export { Text }

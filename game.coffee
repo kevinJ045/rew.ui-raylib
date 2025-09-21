@@ -11,95 +11,99 @@ gui::raylib = raylib;
 
 import "./features/loop.coffee";
 import "./features/window.coffee";
-import "./features/components/init.coffee";
-import "./features/drawer.coffee";
+# import "./features/components/init.coffee";
+# import "./features/drawer.coffee";
+# import { calculateLayout } from "./features/layout.coffee";
 
 using namespace rew::ns
 using namespace raylib
 
 
+gui::window::init("Hello Flex Layout!")
+gui::window::background 0xFF181818
 
-# gui::events::setOnStart ->
+# Create a root flex container
+root = gui::components::FlexRect::new {
+  x: 0,
+  y: 0,
+  width: gui::window::width,
+  height: gui::window::height,
+  flexDirection: 'column',
+  color: 0x00000000
+}
+gui::window::add(root)
 
-#   rew::channel::timeout 1000, ->
-#     gui::loop::stop()
+# Create a header
+header = gui::components::FlexRect::new {
+  height: 50,
+  color: 0xFF303030,
+  flexDirection: 'row',
+  alignItems: 'center',
+  padding: 10
+}
+root.add(header)
 
-gui::window::init("Hello!")
-gui::window::background 0xFF000000
+title = gui::components::FlexText::new {
+    text: "My App",
+    fontSize: 20,
+    color: 0xFFFFFFFF,
+    margin: 10
+}
+header.add(title)
 
-rect = gui::components::Rectangle::new(100, gui::window::height/2, 20, 20, 0xFF0000FF)
-scoreText = gui::components::Text::new("0", 1, 1, 0xFF00FF00)
-fps = gui::components::Text::new("0", 20, gui::window::height - 20, 0xFF00FF00, 10)
-# button = gui::components::Button::new text: "ss"
+# Create a main content area
+main = gui::components::FlexRect::new {
+  flexGrow: 1,
+  color: 0x00000000,
+  flexDirection: 'row'
+}
+root.add(main)
 
-obstacles = []
+# A sidebar
+sidebar = gui::components::FlexRect::new {
+  width: 200,
+  color: 0xFF252525,
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'flex-start',
+  padding: 10
+}
+main.add(sidebar)
 
-gui::window::add rect, scoreText, fps
-
-addNew = ->
-  full_height = gui::window::height
-  first = full_height - randFrom(full_height/3, full_height/2)
-  second = (full_height - first) - 100
-
-  f = gui::components::Rectangle::new(gui::window::width, 0, 100, first)
-  s = gui::components::Rectangle::new(gui::window::width, first + 100, 100, second)
-  f.type = 'top'
-  s.type = 'bottom'
-
-  obstacles.push(f, s)
-  gui::window::add(f, s)
-
-frames = 0
-intrt = rew::channel::interval 1000, ->
-  fps.text = "#{frames}"
-  frames = 0
+button1 = gui::components::FlexRect::new { width: 180, height: 40, color: 0xFF404040, margin: 10 }
+button2 = gui::components::FlexRect::new { width: 180, height: 40, color: 0xFF404040, margin: 10 }
+sidebar.add(button1, button2)
 
 
+# The main content
+content = gui::components::FlexRect::new {
+  flexGrow: 1,
+  color: 0xFF181818,
+  justifyContent: 'center',
+  alignItems: 'center',
+  flexDirection: 'column'
+}
+main.add(content)
 
-gui::events.on 'resize', () ->
-  rect.y = gui::window::height/2
-  fps.y = gui::window::height - 20
+welcomeText = gui::components::FlexText::new {
+    text: "Welcome to the new layout system!",
+    fontSize: 24,
+    color: 0xFFFFFFFF,
+    margin: 20
+}
+content.add(welcomeText)
 
-gui::events.on 'quit', () ->
-  rew::channel::intervalClear intrt
+grower = gui::components::FlexRect::new {
+    width: 100,
+    height: 50,
+    flexGrow: 1,
+    color: 0xFF505080,
+    margin: 10
+}
+content.add(grower)
 
-gap = 0
-nextGap = 200
-score = 0
+
 gui::events.on 'loop', (time) ->
-  frames++
+  calculateLayout(root)
 
-  if IsKeyDown gui::consts::KEY_DOWN
-    rect.y += 1
-  else if IsKeyDown gui::consts::KEY_UP
-    rect.y -= 1
-
-  gap++
-
-  if gap > nextGap
-    addNew()
-    gap = 0
-    nextGap = randFrom 200, 300
-
-  obstacles.forEach (o) =>
-    o.x -= 200 * time
-
-    if CheckCollisionRecsWrapper o.getRect(), rect.getRect()
-      rect.freeRect()
-      o.freeRect()
-      rew::channel::intervalClear intrt
-      gui::window::close()
-
-    rect.freeRect()
-    o.freeRect()
-
-    if o.x < rect.x and o.type == 'top' and !o.scored
-      score += 1
-      scoreText.text = "#{score}"
-      o.scored = true
-
-    if o.x <= -100
-      o.remove()
-      obstacles.splice(obstacles.indexOf(o), 1)
-
-rew::channel::timeout 1, -> gui::loop::run(0, 1000 / 400)
+rew::channel::timeout 1, -> gui::loop::run(60)
