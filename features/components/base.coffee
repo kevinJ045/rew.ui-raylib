@@ -65,7 +65,7 @@ function Component(type = '2d', extends_fn = null)
       this._children.push(...children)
       children.forEach (child) =>
         child.parent = this
-        # calculateLayout child, this
+        calculateLayout child, this
       _add(...children)
 
     _remove = if fn::remove then fn::remove else ->

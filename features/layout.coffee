@@ -1,6 +1,8 @@
 export calculateLayout = (component, parentLayout) ->
   # If no parent layout is provided, use the component's props as the base.
-  parentLayout ||= { x: component.props.x or 0, y: component.props.y or 0, width: component.props.width, height: component.props.height }
+  if parentLayout?
+    parentLayout = parentLayout._layout
+  parentLayout ||= { x: component.props.x or 0, y: component.props.y or 0, width: component.props.width || 0, height: component.props.height || 0 }
 
   # Handle padding
   padding = component.props.padding or 0
@@ -10,7 +12,6 @@ export calculateLayout = (component, parentLayout) ->
     width: parentLayout.width - (padding * 2),
     height: parentLayout.height - (padding * 2)
   }
-
   # Assign the calculated layout to the component.
   component._layout = paddedLayout
 

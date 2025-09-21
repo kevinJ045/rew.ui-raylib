@@ -11,9 +11,9 @@ gui::raylib = raylib;
 
 import "./features/loop.coffee";
 import "./features/window.coffee";
-# import "./features/components/init.coffee";
-# import "./features/drawer.coffee";
-# import { calculateLayout } from "./features/layout.coffee";
+import "./features/components/init.coffee";
+import "./features/drawer.coffee";
+import { calculateLayout } from "./features/layout.coffee";
 
 using namespace rew::ns
 using namespace raylib
@@ -29,7 +29,8 @@ root = gui::components::FlexRect::new {
   width: gui::window::width,
   height: gui::window::height,
   flexDirection: 'column',
-  color: 0x00000000
+  color: 0x00000000,
+  layer: 1
 }
 gui::window::add(root)
 
@@ -40,14 +41,16 @@ header = gui::components::FlexRect::new {
   flexDirection: 'row',
   alignItems: 'center',
   padding: 10
+  layer: 2
 }
 root.add(header)
 
 title = gui::components::FlexText::new {
-    text: "My App",
-    fontSize: 20,
-    color: 0xFFFFFFFF,
-    margin: 10
+  text: "My App",
+  fontSize: 20,
+  color: 0xFFFFFFFF,
+  margin: 10,
+  layer: 3
 }
 header.add(title)
 
@@ -55,7 +58,8 @@ header.add(title)
 main = gui::components::FlexRect::new {
   flexGrow: 1,
   color: 0x00000000,
-  flexDirection: 'row'
+  flexDirection: 'row',
+  layer: 2
 }
 root.add(main)
 
@@ -66,22 +70,24 @@ sidebar = gui::components::FlexRect::new {
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'flex-start',
-  padding: 10
+  padding: 10,
+  layer: 3
 }
 main.add(sidebar)
 
-button1 = gui::components::FlexRect::new { width: 180, height: 40, color: 0xFF404040, margin: 10 }
-button2 = gui::components::FlexRect::new { width: 180, height: 40, color: 0xFF404040, margin: 10 }
+button1 = gui::components::FlexRect::new { layer: 3, width: 180, height: 40, color: 0xFF404040, margin: 10 }
+button2 = gui::components::FlexRect::new { layer: 3, width: 180, height: 40, color: 0xFF404040, margin: 10 }
 sidebar.add(button1, button2)
 
 
 # The main content
 content = gui::components::FlexRect::new {
   flexGrow: 1,
-  color: 0xFF181818,
+  color: 0xFF00FF00,
   justifyContent: 'center',
   alignItems: 'center',
-  flexDirection: 'column'
+  flexDirection: 'column',
+  layer: 3
 }
 main.add(content)
 
@@ -89,7 +95,8 @@ welcomeText = gui::components::FlexText::new {
     text: "Welcome to the new layout system!",
     fontSize: 24,
     color: 0xFFFFFFFF,
-    margin: 20
+    margin: 20,
+    layer: 4
 }
 content.add(welcomeText)
 
@@ -98,12 +105,13 @@ grower = gui::components::FlexRect::new {
     height: 50,
     flexGrow: 1,
     color: 0xFF505080,
-    margin: 10
+    margin: 10,
+    layer: 4
 }
 content.add(grower)
 
 
-gui::events.on 'loop', (time) ->
-  calculateLayout(root)
+# gui::events.on 'loop', (time) ->
+#   calculateLayout(root)
 
-rew::channel::timeout 1, -> gui::loop::run(60)
+move -> gui::loop::run(0, 1000 / 400)

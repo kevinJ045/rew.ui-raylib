@@ -1,4 +1,5 @@
 import { Component } from "./base.coffee";
+import { calculateLayout } from "../layout.coffee";
 
 using namespace rew::ns;
 using namespace gui::raylib;
@@ -21,7 +22,8 @@ function FlexRect(
 
 function FlexRect::draw(time)
   { color } = @props
-  { x, y, width, height } = @_layout or @props
+  calculateLayout this, this.parent
+  { x, y, width, height } = @_layout
   rect = CreateRectangle x, y, width, height
   DrawRectangleRoundedWrapper rect, @props.radius, @props.segments, @props.color
   DrawRectangleRoundedLinesExWrapper rect, @props.radius, @props.segments, @props.border, @props.color if @props.border
